@@ -1,50 +1,28 @@
-# React + TypeScript + Vite
+# moonstruck: AI 타로점 서비스
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+moonstruck은 사용자가 입력한 질문과 무작위로 선택된 타로 카드를 기반으로 AI 모델을 활용해 맞춤형 타로 점을 제공하는 서비스입니다.
 
-Currently, two official plugins are available:
+## 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-[ ] **사용자 질문 입력:** 사용자가 자신의 질문을 앱에 입력할 수 있습니다. -[ ] **무작위 카드 선택:** 앱은 카드 덱에서 1장 또는 3장의 타로 카드를 무작위로 뽑습니다. -[ ] **Vertex AI 연동:** Google Vertex AI 플랫폼에서 제공하는 모델의 API 엔드포인트와 연결하여 기본 프롬프트, 질문, 뽑힌 카드 정보를 전송합니다. -[ ] **AI 기반 해석:** 선택된 카드와 질문이 AI 모델에 전송되어 맞춤형 타로 해석을 생성합니다.
 
-## Expanding the ESLint configuration
+## 기술 스택
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **React**
+- **TypeScript**
 
-- Configure the top-level `parserOptions` property like this:
+## 작동 원리
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+1. 사용자가 자신의 고민이나 특정 상황에 대한 질문을 입력합니다.
+2. 앱이 무작위로 1장 또는 3장의 타로 카드를 선택합니다.
+3. 사용자의 질문, 선택된 카드, 기본 프롬프트가 AI 모델에 전송됩니다.
+4. 모델이 입력을 처리하고, 카드와 질문을 기반으로 타로 해석을 생성합니다.
+5. AI가 생성한 해석이 화면에 표시되어 사용자에게 통찰력과 조언을 제공합니다.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 향후 추가 기능
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **사용자 인증:** Google 또는 소셜 계정을 통한 로그인 기능 추가.
+- **크레딧 기능:** 계정별로 무료 크레딧을 제공하고, 24시간마다 갱신되도록 하여 예상되는 트래픽을 관리.
+- **세션 히스토리:** 이전 타로 해석을 저장하여 나중에 다시 확인할 수 있는 기능.
+- **커스터마이징 가능한 카드 배열:** 다양한 타로 카드 배열(예: 켈틱 크로스) 제공.
+- **다크 모드:** 사용자 경험을 개선하기 위한 다크 모드 지원.
