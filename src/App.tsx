@@ -12,7 +12,8 @@ function App() {
   }
 
   function checkSubmittedForm(inputValue: string) {
-    console.log(inputValue);
+    const result = { inputValue, cardCount };
+    console.log(result);
   }
   return (
     <>
