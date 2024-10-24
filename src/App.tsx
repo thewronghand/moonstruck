@@ -19,8 +19,10 @@ function App() {
   async function checkSubmittedForm(inputValue: string) {
     const drawnCardsResult = drawRandomCards(cardCount);
     setDrawnCards(drawnCardsResult);
-    const formattedInput = formatUserInputAndCardInfo(inputValue, drawnCards);
-    console.log(prompt);
+    const formattedInput = formatUserInputAndCardInfo(
+      inputValue,
+      drawnCardsResult
+    );
     const result = await callVertexAPI(formattedInput);
     console.log(result);
   }
