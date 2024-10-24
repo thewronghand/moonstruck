@@ -3,6 +3,8 @@ import Input from './Components/Input';
 import SpreadSelector from './Components/SpreadSelector';
 import { drawRandomCards } from './utils/drawRandomCards';
 import { DrawnTarotCard } from './Types/types';
+import { formatUserInputAndCardInfo } from './utils/formatUserInputAndCardInfo';
+import { callVertexAPI } from './api/api';
 
 const INITIAL_CARD_COUNT = 1;
 
@@ -14,10 +16,12 @@ function App() {
     setCardCount(newCardCount);
   }
 
-  function checkSubmittedForm(inputValue: string) {
+  async function checkSubmittedForm(inputValue: string) {
     const drawnCardsResult = drawRandomCards(cardCount);
     setDrawnCards(drawnCardsResult);
-    const result = { inputValue, cardCount, drawnCards };
+    const formattedInput = formatUserInputAndCardInfo(inputValue, drawnCards);
+    console.log(prompt);
+    const result = await callVertexAPI(formattedInput);
     console.log(result);
   }
   return (
