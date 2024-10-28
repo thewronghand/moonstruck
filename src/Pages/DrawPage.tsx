@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DrawnTarotCard } from '../Types/types';
 import { drawRandomCards } from '../utils/drawRandomCards';
@@ -13,30 +13,35 @@ export default function DrawPage() {
   const [drawnCards, setDrawnCards] = useState<DrawnTarotCard[]>([]);
   const [isAnimating, setIsAnimating] = useState(true);
   const [apiResponse, setApiResponse] = useState<string | null>(null);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    console.log('useEffect 실행됨!');
     if (!userInput || !cardCount) {
       navigate('/');
       return;
     }
 
-    const drawnCardsResult = drawRandomCards(cardCount);
-    setDrawnCards(drawnCardsResult);
-    const formattedQuery = formatUserInputAndCardInfo(
-      userInput,
-      drawnCardsResult
-    );
+    if (!hasFetched.current) {
+      hasFetched.current = true;
+      const drawnCardsResult = drawRandomCards(cardCount);
+      setDrawnCards(drawnCardsResult);
+      const formattedQuery = formatUserInputAndCardInfo(
+        userInput,
+        drawnCardsResult
+      );
 
-    (async () => {
-      try {
-        const fetchedApiResponse = await callVertexAPI(formattedQuery);
-        const responseText = fetchedApiResponse.content?.[0]?.text || '';
-        setApiResponse(responseText);
-      } catch (error) {
-        console.error('API 요청 오류:', error);
-        setApiResponse('API 요청에 실패했습니다.');
-      }
-    })();
+      (async () => {
+        try {
+          const fetchedApiResponse = await callVertexAPI(formattedQuery);
+          const responseText = fetchedApiResponse.content?.[0]?.text || '';
+          setApiResponse(responseText);
+        } catch (error) {
+          console.error('API 요청 오류:', error);
+          setApiResponse('API 요청에 실패했습니다.');
+        }
+      })();
+    }
   }, [userInput, cardCount, navigate]);
 
   const handleButtonClick = () => {
