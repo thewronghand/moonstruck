@@ -16,7 +16,6 @@ export default function DrawPage() {
   const hasFetched = useRef(false);
 
   useEffect(() => {
-    console.log('useEffect 실행됨!');
     if (!userInput || !cardCount) {
       navigate('/');
       return;
