@@ -15,8 +15,6 @@ export default function DrawPage() {
   const [apiResponse, setApiResponse] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(userInput);
-    console.log(cardCount);
     if (!userInput || !cardCount) {
       navigate('/');
       return;
@@ -41,12 +39,11 @@ export default function DrawPage() {
     })();
   }, [userInput, cardCount, navigate]);
 
-  // 버튼 클릭으로 애니메이션 중단
   const handleButtonClick = () => {
     setIsAnimating(false);
   };
+  //TBD: 멋지고 그럴듯한 카드 뽑기 로직과 애니메이션
 
-  // 애니메이션이 중단되고 API 응답이 완료되면 ResultPage로 이동
   useEffect(() => {
     if (!isAnimating && apiResponse) {
       navigate('/result', { state: { apiResponse, drawnCards } });

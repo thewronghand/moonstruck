@@ -14,7 +14,6 @@ export default function QueryPage() {
   }
 
   function handleSubmit(userInput: string) {
-    console.log(userInput, cardCount);
     navigate('/draw', { state: { userInput, cardCount } });
   }
 
