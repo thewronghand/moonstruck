@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { DrawnTarotCard } from '../Types/types';
 import { drawRandomCards } from '../utils/drawRandomCards';
 import { formatUserInputAndCardInfo } from '../utils/formatUserInputAndCardInfo';
-import { callVertexAPI } from '../api/api';
+import { callVertexAPI } from '../api/callVertexApi';
 
 export default function DrawPage() {
   const location = useLocation();
