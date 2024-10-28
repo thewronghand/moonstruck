@@ -2,9 +2,13 @@ import axios from 'axios';
 import { prompt } from '../data/prompt';
 
 export async function callVertexAPI(userInputWithCardInfo: string) {
-  const API_URL = `https://us-east5-aiplatform.googleapis.com/v1/projects/${
+  const API_URL = `https://${
+    import.meta.env.VITE_API_REGION
+  }-aiplatform.googleapis.com/v1/projects/${
     import.meta.env.VITE_GOOGLE_PROJECT_ID
-  }/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict`;
+  }/locations/${import.meta.env.VITE_API_REGION}/publishers/${
+    import.meta.env.VITE_API_PUBLISHER
+  }/models/${import.meta.env.VITE_API_TARGET_MODEL}:rawPredict`;
 
   const requestPayload = {
     anthropic_version: 'vertex-2023-10-16',
