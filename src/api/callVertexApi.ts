@@ -1,10 +1,9 @@
 import axios from 'axios';
 import { prompt } from '../data/prompt';
+import apiClient from './apiClient';
 
 export async function callVertexAPI(userInputWithCardInfo: string) {
-  const API_URL = `https://us-east5-aiplatform.googleapis.com/v1/projects/${
-    import.meta.env.VITE_GOOGLE_PROJECT_ID
-  }/locations/us-east5/publishers/anthropic/models/claude-3-5-sonnet@20240620:rawPredict`;
+  const API_URL = `:rawPredict`;
 
   const requestPayload = {
     anthropic_version: 'vertex-2023-10-16',
@@ -24,12 +23,7 @@ export async function callVertexAPI(userInputWithCardInfo: string) {
   };
 
   try {
-    const response = await axios.post(API_URL, requestPayload, {
-      headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_GOOGLE_API_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await apiClient.post(API_URL, requestPayload);
     console.log('Response: ', response.data);
     const messageContent = response.data.content[0].text;
     console.log(messageContent);
