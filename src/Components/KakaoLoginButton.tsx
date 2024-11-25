@@ -1,6 +1,6 @@
 export default function KakaoLoginButton() {
   function onLoginWithKakao() {
-    const redirectUri = `${location.origin}/login/kakaotalk`;
+    const redirectUri = `${window.location.origin}/login/kakao`;
     window.Kakao.Auth.authorize({
       redirectUri,
     });
