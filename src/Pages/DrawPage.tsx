@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { DrawnTarotCard } from '../Types/types';
+import { DrawnTarotCard } from '../Types/tarotCard';
 import { drawRandomCards } from '../utils/drawRandomCards';
 import { formatUserInputAndCardInfo } from '../utils/formatUserInputAndCardInfo';
 import { callVertexAPI } from '../api/callVertexApi';

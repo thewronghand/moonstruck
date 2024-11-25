@@ -1,6 +1,6 @@
 import { random, shuffle } from 'es-toolkit';
 import { tarotDeck } from '../data/tarotDeck';
-import { TarotCard } from '../Types/types';
+import { TarotCard } from '../Types/tarotCard';
 
 export function drawRandomCards(cardCount: number) {
   const shuffledDeck = shuffle([...tarotDeck]);
