@@ -1,4 +1,4 @@
-import { DrawnTarotCard } from '../Types/types';
+import { DrawnTarotCard } from '../Types/tarotCard';
 
 export function formatDrawnCards(cards: DrawnTarotCard[]): string {
   return cards
