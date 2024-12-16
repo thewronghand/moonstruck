@@ -25,13 +25,13 @@ export default function DrawPage() {
       hasFetched.current = true;
       const drawnCardsResult = drawRandomCards(cardCount);
       setDrawnCards(drawnCardsResult);
-      const formattedQuery = formatUserInputAndCardInfo(
-        userInput,
-        drawnCardsResult
-      );
 
       (async () => {
         try {
+          const formattedQuery = formatUserInputAndCardInfo(
+            userInput,
+            drawnCardsResult
+          );
           const fetchedApiResponse = await callVertexAPI(formattedQuery);
           const responseText = fetchedApiResponse.content?.[0]?.text || '';
           setApiResponse(responseText);
@@ -40,6 +40,7 @@ export default function DrawPage() {
           setApiResponse('API 요청에 실패했습니다.');
         }
       })();
+      
     }
   }, [userInput, cardCount, navigate]);
 
