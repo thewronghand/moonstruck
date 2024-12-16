@@ -19,6 +19,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/user/, ''),
         },
+        '/vertex-claude': {
+          target: env.VITE_FIREBASE_FUNCTIONS_API_URL,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/vertex-claude/, '/api/vertex-claude'),
+        },
       },
     },
   };
