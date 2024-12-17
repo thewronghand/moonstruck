@@ -23,5 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 /keys
-.env
+.env.local
+.env.production
 update-token.sh
+.firebase/
+*.tsbuildinfo

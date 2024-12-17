@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { DrawnTarotCard } from '../Types/types';
+import { DrawnTarotCard } from '../Types/tarotCard';
 
 export default function ResultPage() {
   const location = useLocation();
