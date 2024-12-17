@@ -23,6 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 /keys
-.env
-.env.test
+.env.local
+.env.production
 update-token.sh
