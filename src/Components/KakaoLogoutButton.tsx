@@ -2,24 +2,7 @@ import { auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import { useSetRecoilState } from 'recoil';
 import { userState } from '../atoms/authAtom';
-import styled from 'styled-components';
-
-const StyledButton = styled.button`
-  width: 100%;
-  padding: 15px;
-  background-color: #9c88ff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 20px;
-
-  &:hover {
-    background-color: #8c78ff;
-  }
-`;
+import { LogoutButton } from './styles/KakaoLogoutButton.styles';
 
 export default function KakaoLogoutButton() {
   const setUser = useSetRecoilState(userState);
@@ -37,5 +20,5 @@ export default function KakaoLogoutButton() {
     }
   };
 
-  return <StyledButton onClick={handleLogout}>로그아웃</StyledButton>;
+  return <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>;
 }
