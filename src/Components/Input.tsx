@@ -40,33 +40,47 @@ const StyledTextArea = styled.textarea`
   }
 `;
 
-const SubmitButton = styled.button`
+const SubmitButton = styled.button<{ disabled: boolean }>`
   width: 100%;
   padding: 12px;
-  background-color: #9c88ff;
+  background-color: ${props => props.disabled ? '#cccccc' : '#9c88ff'};
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
-  cursor: pointer;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #8c78ff;
+    background-color: ${props => props.disabled ? '#cccccc' : '#8c78ff'};
   }
+`;
+
+const CharCount = styled.div<{ isAtLimit: boolean }>`
+  align-self: flex-end;
+  margin-bottom: 10px;
+  color: ${props => props.isAtLimit ? '#ff4444' : '#666'};
+  font-size: 14px;
+  transition: color 0.2s ease;
 `;
 
 export default function Input({ onFormSubmit }: InputProps) {
   const [inputValue, setInputValue] = useState('');
+  const maxLength = 300;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value);
+    const text = e.target.value;
+    if (text.length <= maxLength) {
+      setInputValue(text);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setInputValue('');
-    onFormSubmit(inputValue);
+    if (inputValue.length <= maxLength) {
+      setInputValue('');
+      onFormSubmit(inputValue);
+    }
   };
 
   return (
@@ -77,9 +91,18 @@ export default function Input({ onFormSubmit }: InputProps) {
           value={inputValue}
           onChange={handleInputChange}
           placeholder="궁금한 점을 자세히 적어주세요. 타로점을 통해 답을 찾아드립니다."
-          rows={8}
+          rows={5}
+          maxLength={maxLength}
         />
-        <SubmitButton type="submit">카드 뽑으러 가기</SubmitButton>
+        <CharCount isAtLimit={inputValue.length === maxLength}>
+          {inputValue.length}/{maxLength}
+        </CharCount>
+        <SubmitButton 
+          type="submit" 
+          disabled={inputValue.length > maxLength}
+        >
+          운세 보기
+        </SubmitButton>
       </StyledForm>
     </InputContainer>
   );
