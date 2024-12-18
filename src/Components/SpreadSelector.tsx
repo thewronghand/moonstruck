@@ -18,12 +18,12 @@ const spreadOptions: SpreadOption[] = [
   {
     value: 3,
     label: "트리플",
-    description: "과거, 현재, 미래를 나타내는 세 장의 카드로 시간의 흐름을 살펴보는 스프레드입니다."
+    description: "세 장의 카드로 질문자의 상황을 살펴보는 스프레드입니다."
   },
   {
     value: 5,
     label: "파이브 카드 크로스",
-    description: "현재 상황, 장애물, 목표, 조언, 결과를 나타내는 다섯 장의 카드로 상황을 종합적으로 분석합니다."
+    description: "다섯 장의 카드로 상황을 종합적으로 분석합니다."
   },
   {
     value: 10,
@@ -38,57 +38,69 @@ interface SpreadSelectorProps {
 }
 
 const Container = styled.div`
-  margin: 20px 0;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  max-width: 400px;
+  padding: 20px;
 `;
 
-const Title = styled.h3`
-  margin-bottom: 16px;
+const DropdownWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const Title = styled.h2`
+  color: #333;
+  margin-bottom: 15px;
 `;
 
 const DropdownButton = styled.button<{ $isOpen: boolean }>`
   width: 100%;
-  padding: 16px;
-  border: 2px solid #4a90e2;
+  padding: 15px;
+  border: 1px solid #ddd;
   border-radius: ${props => props.$isOpen ? '8px 8px 0 0' : '8px'};
   background: white;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: all 0.2s ease;
 
   &:hover {
-    background: #f5f5f5;
+    border-color: #9c88ff;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #9c88ff;
   }
 `;
 
 const OptionsContainer = styled.div<{ $isOpen: boolean }>`
   position: absolute;
-  top: 100%;
+  top: calc(100% - 0.5px);
   left: 0;
   right: 0;
   background: white;
-  border: 2px solid #4a90e2;
+  border: 1px solid #ddd;
   border-top: none;
   border-radius: 0 0 8px 8px;
   z-index: 10;
   display: ${props => props.$isOpen ? 'block' : 'none'};
   max-height: 300px;
   overflow-y: auto;
-  overflow-x: visible;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const Option = styled.button<{ $isSelected: boolean }>`
   width: 100%;
-  padding: 16px;
+  padding: 15px;
   border: none;
-  background: ${props => props.$isSelected ? '#e3f2fd' : 'white'};
+  background: ${props => props.$isSelected ? '#f0ebff' : 'white'};
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 16px;
   text-align: left;
   display: flex;
   justify-content: space-between;
@@ -96,11 +108,30 @@ const Option = styled.button<{ $isSelected: boolean }>`
   position: relative;
 
   &:hover {
-    background: ${props => props.$isSelected ? '#e3f2fd' : '#f5f5f5'};
+    background: ${props => props.$isSelected ? '#f0ebff' : '#f8f8f8'};
   }
 
   &:not(:last-child) {
     border-bottom: 1px solid #eee;
+  }
+`;
+
+const InfoIcon = styled.span`
+  position: relative;
+  display: inline-block;
+  margin-left: 8px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  background: #9c88ff;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: help;
+  text-align: center;
+
+  &::before {
+    content: "?";
   }
 `;
 
@@ -113,7 +144,7 @@ const Tooltip = styled.div<{ $left: number; $top: number; $isLeftSide: boolean }
   `}
   top: ${props => props.$top}px;
   padding: 8px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(156, 136, 255, 0.95);
   color: white;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -132,29 +163,11 @@ const Tooltip = styled.div<{ $left: number; $top: number; $isLeftSide: boolean }
     border: 4px solid transparent;
     ${props => props.$isLeftSide ? `
       left: 100%;
-      border-left-color: rgba(0, 0, 0, 0.8);
+      border-left-color: rgba(156, 136, 255, 0.95);
     ` : `
       right: 100%;
-      border-right-color: rgba(0, 0, 0, 0.8);
+      border-right-color: rgba(156, 136, 255, 0.95);
     `}
-  }
-`;
-
-const InfoIcon = styled.span`
-  position: relative;
-  display: inline-block;
-  margin-left: 8px;
-  width: 16px;
-  height: 16px;
-  line-height: 16px;
-  background: #eee;
-  border-radius: 50%;
-  font-size: 0.8rem;
-  cursor: help;
-  text-align: center;
-
-  &::before {
-    content: "?";
   }
 `;
 
@@ -223,36 +236,38 @@ export default function SpreadSelector({
 
   return (
     <Container>
-      <Title>어떤 스프레드로 뽑아볼까요?</Title>
-      <DropdownButton 
-        onClick={() => setIsOpen(!isOpen)}
-        $isOpen={isOpen}
-      >
-        {selectedOption.label}
-        <ArrowIcon $isOpen={isOpen} />
-      </DropdownButton>
-      <OptionsContainer $isOpen={isOpen}>
-        {spreadOptions.map((option) => (
-          <Option
-            key={option.value}
-            $isSelected={cardCount === option.value}
-            onClick={() => handleOptionClick(option.value)}
-          >
-            {option.label}
-            <InfoIcon
-              ref={iconRefs.current[option.value]}
-              onMouseEnter={() => setActiveTooltip(option.value.toString())}
-              onMouseLeave={() => setActiveTooltip(null)}
-            />
-            {activeTooltip === option.value.toString() && (
-              <TooltipPortal
-                description={option.description}
-                iconRef={iconRefs.current[option.value]}
+      <Title>타로 스프레드를 선택해주세요</Title>
+      <DropdownWrapper>
+        <DropdownButton 
+          onClick={() => setIsOpen(!isOpen)}
+          $isOpen={isOpen}
+        >
+          {selectedOption.label}
+          <ArrowIcon $isOpen={isOpen} />
+        </DropdownButton>
+        <OptionsContainer $isOpen={isOpen}>
+          {spreadOptions.map((option) => (
+            <Option
+              key={option.value}
+              $isSelected={cardCount === option.value}
+              onClick={() => handleOptionClick(option.value)}
+            >
+              {option.label}
+              <InfoIcon
+                ref={iconRefs.current[option.value]}
+                onMouseEnter={() => setActiveTooltip(option.value.toString())}
+                onMouseLeave={() => setActiveTooltip(null)}
               />
-            )}
-          </Option>
-        ))}
-      </OptionsContainer>
+              {activeTooltip === option.value.toString() && (
+                <TooltipPortal
+                  description={option.description}
+                  iconRef={iconRefs.current[option.value]}
+                />
+              )}
+            </Option>
+          ))}
+        </OptionsContainer>
+      </DropdownWrapper>
     </Container>
   );
 }
