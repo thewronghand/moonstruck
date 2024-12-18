@@ -15,11 +15,11 @@ const InputContainer = styled.div`
 
 const Title = styled.h2`
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 const StyledForm = styled.form`
-  width: 80%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -77,7 +77,7 @@ export default function Input({ onFormSubmit }: InputProps) {
           value={inputValue}
           onChange={handleInputChange}
           placeholder="궁금한 점을 자세히 적어주세요. 타로점을 통해 답을 찾아드립니다."
-          rows={5}
+          rows={8}
         />
         <SubmitButton type="submit">카드 뽑으러 가기</SubmitButton>
       </StyledForm>
