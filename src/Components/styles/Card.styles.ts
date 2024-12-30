@@ -27,7 +27,7 @@ export const CardFace = styled.div`
   overflow: hidden;
 `;
 
-export const CardFront = styled(CardFace)`
+export const CardFront = styled(CardFace)<{ $isReversed: boolean }>`
   transform: rotateY(180deg);
   position: relative;
   
@@ -35,6 +35,7 @@ export const CardFront = styled(CardFace)`
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transform: ${props => props.$isReversed ? 'rotate(180deg)' : 'none'};
   }
 `;
 

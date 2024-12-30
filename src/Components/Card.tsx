@@ -16,6 +16,7 @@ interface CardProps {
 
 export default function Card({ card, isRevealed = false, onReveal }: CardProps) {
   const [isFlipped, setIsFlipped] = useState(isRevealed);
+  const isReversed = card.direction === '역방향';
   
   const handleClick = () => {
     if (!isRevealed && onReveal) {
@@ -34,13 +35,16 @@ export default function Card({ card, isRevealed = false, onReveal }: CardProps) 
             loading="lazy"
           />
         </CardBack>
-        <CardFront>
+        <CardFront $isReversed={isReversed}>
           <img 
             src={`/cards/default/${card.id}.webp`} 
             alt={card.name.ko}
             loading="lazy"
           />
-          <CardName>{card.name.ko}</CardName>
+          <CardName>
+            {card.name.ko}
+            {isReversed && ' (역방향)'}
+          </CardName>
         </CardFront>
       </CardInner>
     </CardContainer>
