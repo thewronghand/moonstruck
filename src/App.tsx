@@ -9,6 +9,7 @@ import { RecoilRoot } from 'recoil';
 import AuthProvider from './utils/AuthProvider';
 import { createGlobalStyle } from 'styled-components';
 import React, { useRef, useEffect, useState } from 'react';
+import SpreadTestPage from './Pages/SpreadTestPage';
 
 const AppContainer = styled.div`
   max-width: 480px;
@@ -66,6 +67,7 @@ function App() {
                 <Route path="/draw" element={<DrawPage />} />
                 <Route path="/result" element={<ResultPage />} />
                 <Route path="/login/:platform" element={<LoginPage />} />
+                <Route path="/spread-test" element={<SpreadTestPage />} />
               </Routes>
             </Router>
           </AppContainer>
