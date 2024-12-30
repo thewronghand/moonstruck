@@ -51,7 +51,7 @@ export default function DrawPage() {
 
   useEffect(() => {
     if (!isAnimating && apiResponse) {
-      navigate('/result', { state: { apiResponse, drawnCards } });
+      navigate('/result', { state: { userInput,apiResponse, drawnCards } });
     }
   }, [isAnimating, apiResponse, navigate, drawnCards]);
 
