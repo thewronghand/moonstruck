@@ -1,13 +1,12 @@
 import { useLocation } from 'react-router-dom';
-import { DrawnTarotCard } from '../Types/tarotCard';
-import Card from '../Components/Card';
+
 import {
   Container,
   Section,
   Title,
-  CardsContainer,
   Text
 } from './styles/ResultPage.styles';
+import SpreadDisplay from '../Components/SpreadDisplay';
 
 export default function ResultPage() {
   const location = useLocation();
@@ -26,15 +25,7 @@ export default function ResultPage() {
 
       <Section>
         <Title>뽑힌 카드</Title>
-        <CardsContainer>
-          {drawnCards.map((card: DrawnTarotCard, index: number) => (
-            <Card 
-              key={index}
-              card={card}
-              isRevealed={true}
-            />
-          ))}
-        </CardsContainer>
+        <SpreadDisplay cards={drawnCards} revealed={true} />
       </Section>
 
       <Section>
