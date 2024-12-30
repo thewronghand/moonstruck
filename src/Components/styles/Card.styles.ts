@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 export const CardContainer = styled.div<{ $isFlipped: boolean }>`
   position: relative;
-  width: 200px;
-  height: 340px;
+  width: 100%;
+  height: 100%;
   perspective: 1000px;
   cursor: pointer;
 `;
@@ -22,24 +22,27 @@ export const CardFace = styled.div`
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  padding: 8px;
+  padding: 0;
   background: white;
 `;
 
 export const CardFront = styled(CardFace)<{ $isReversed: boolean }>`
   transform: rotateY(180deg);
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
     transform: ${props => props.$isReversed ? 'rotate(180deg)' : 'none'};
     transition: filter 0.3s ease;
-    border-radius: 6px;
+    border-radius: 2px;
   }
 
   &:hover {
@@ -53,7 +56,7 @@ export const CardBack = styled(CardFace)`
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
   }
 `;
 
