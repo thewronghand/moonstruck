@@ -36,6 +36,13 @@ export const CardFront = styled(CardFace)<{ $isReversed: boolean }>`
     height: 100%;
     object-fit: cover;
     transform: ${props => props.$isReversed ? 'rotate(180deg)' : 'none'};
+    transition: filter 0.3s ease;
+  }
+
+  &:hover {
+    img {
+      filter: blur(3px);
+    }
   }
 `;
 
@@ -49,15 +56,22 @@ export const CardBack = styled(CardFace)`
 
 export const CardName = styled.div`
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.7);
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
   color: white;
-  padding: 8px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: center;
+  gap: 8px;
   
   ${CardFront}:hover & {
     opacity: 1;

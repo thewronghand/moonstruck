@@ -42,8 +42,8 @@ export default function Card({ card, isRevealed = false, onReveal }: CardProps) 
             loading="lazy"
           />
           <CardName>
-            {card.name.ko}
-            {isReversed && ' (역방향)'}
+            <div>{card.name.ko}</div>
+            {isReversed && <div>(역방향)</div>}
           </CardName>
         </CardFront>
       </CardInner>
