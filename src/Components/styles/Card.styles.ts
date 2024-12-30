@@ -25,6 +25,8 @@ export const CardFace = styled.div`
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  padding: 8px;
+  background: white;
 `;
 
 export const CardFront = styled(CardFace)<{ $isReversed: boolean }>`
@@ -37,6 +39,7 @@ export const CardFront = styled(CardFace)<{ $isReversed: boolean }>`
     object-fit: cover;
     transform: ${props => props.$isReversed ? 'rotate(180deg)' : 'none'};
     transition: filter 0.3s ease;
+    border-radius: 6px;
   }
 
   &:hover {
