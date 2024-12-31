@@ -1,3 +1,6 @@
+import { CommonButton } from "./styles/common.styles";
+
+
 export default function KakaoLoginButton() {
   function onLoginWithKakao() {
     const redirectUri = `${window.location.origin}/login/kakao`;
@@ -6,5 +9,5 @@ export default function KakaoLoginButton() {
     });
   }
 
-  return <button onClick={onLoginWithKakao}>카카오 로그인</button>;
+  return <CommonButton onClick={onLoginWithKakao}>카카오 로그인</CommonButton>;
 }

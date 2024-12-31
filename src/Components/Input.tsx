@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Container, Title, CommonButton } from './styles/common.styles';
+import { StyledForm, StyledTextArea, CharCount } from './styles/Input.styles';
 
 interface InputProps {
   onFormSubmit: (inputValue: string) => void;
@@ -6,29 +8,44 @@ interface InputProps {
 
 export default function Input({ onFormSubmit }: InputProps) {
   const [inputValue, setInputValue] = useState('');
+  const maxLength = 300;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value);
+    const text = e.target.value;
+    if (text.length <= maxLength) {
+      setInputValue(text);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setInputValue('');
-    onFormSubmit(inputValue);
+    if (inputValue.length <= maxLength) {
+      setInputValue('');
+      onFormSubmit(inputValue);
+    }
   };
 
   return (
-    <div>
-      <h2>User Input</h2>
-      <form onSubmit={handleSubmit}>
-        <textarea
+    <Container>
+      <Title>어떤 내용을 점쳐보시겠어요?</Title>
+      <StyledForm onSubmit={handleSubmit}>
+        <StyledTextArea
           value={inputValue}
           onChange={handleInputChange}
-          placeholder="아무 고민이나 적어보세요"
+          placeholder="궁금한 점을 자세히 적어주세요. 타로점을 통해 답을 찾아드립니다."
           rows={5}
+          maxLength={maxLength}
         />
-        <button type="submit">제출</button>
-      </form>
-    </div>
+        <CharCount isAtLimit={inputValue.length === maxLength}>
+          {inputValue.length}/{maxLength}
+        </CharCount>
+        <CommonButton 
+          type="submit" 
+          disabled={inputValue.length > maxLength}
+        >
+          운세 보기
+        </CommonButton>
+      </StyledForm>
+    </Container>
   );
 }

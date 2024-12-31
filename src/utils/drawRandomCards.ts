@@ -1,8 +1,8 @@
 import { random, shuffle } from 'es-toolkit';
 import { tarotDeck } from '../data/tarotDeck';
-import { TarotCard } from '../Types/tarotCard';
+import { TarotCard, DrawnTarotCard } from '../Types/tarotCard';
 
-export function drawRandomCards(cardCount: number) {
+export function drawRandomCards(cardCount: number): DrawnTarotCard[] {
   const shuffledDeck = shuffle([...tarotDeck]);
 
   const result = shuffledDeck
@@ -11,11 +11,11 @@ export function drawRandomCards(cardCount: number) {
   return result;
 }
 
-function processCardDirection(card: TarotCard) {
+function processCardDirection(card: TarotCard): DrawnTarotCard {
   const direction: '정방향' | '역방향' =
     random(0, 1) > 0.5 ? '정방향' : '역방향';
 
-  const result = {
+  const result: DrawnTarotCard = {
     id: card.id,
     name: card.name,
     arcanaType: card.arcanaType,
