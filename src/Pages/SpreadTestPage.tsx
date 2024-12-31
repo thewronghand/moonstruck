@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SingleSpread, TripleSpread, FiveCardSpread, CelticCrossSpread } from '../Components/Spreads';
+import { SingleSpread, TripleSpread,FiveCardCross, CelticCrossSpread } from '../Components/Spreads';
 import { drawRandomCards } from '../utils/drawRandomCards';
 
 const TestPageContainer = styled.div`
