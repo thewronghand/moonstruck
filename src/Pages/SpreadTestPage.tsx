@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SingleSpread, TripleSpread,FiveCardCross, CelticCrossSpread } from '../Components/Spreads';
+import { SingleSpread, TripleSpread, FiveCardCross, CelticCrossSpread } from '../Components/Spreads';
 import { drawRandomCards } from '../utils/drawRandomCards';
 
 const TestPageContainer = styled.div`
@@ -42,7 +42,7 @@ export default function SpreadTestPage() {
 
       <SpreadSection>
         <h2>Five Card Cross</h2>
-        <FiveCardSpread cards={fiveCards} revealed={REVEALED} />
+        <FiveCardCross cards={fiveCards} revealed={REVEALED} />
       </SpreadSection>
 
       <SpreadSection>
