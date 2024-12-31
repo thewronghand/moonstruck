@@ -25,7 +25,11 @@ export default function ResultPage() {
 
       <Section>
         <Title>뽑힌 카드</Title>
-        <SpreadDisplay cards={drawnCards} revealed={true} />
+        <SpreadDisplay 
+          cards={drawnCards} 
+          revealed={true}
+          visibleCardCount={drawnCards.length}
+        />
       </Section>
 
       <Section>
