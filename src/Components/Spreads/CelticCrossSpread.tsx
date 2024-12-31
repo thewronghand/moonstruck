@@ -5,42 +5,101 @@ import { CelticCrossContainer, GridContainer } from './styles/CelticCross.styles
 interface SpreadProps {
   cards: DrawnTarotCard[];
   revealed?: boolean;
+  onReveal?: () => void;
+  visibleCardCount?: number;
 }
 
-export default function CelticCrossSpread({ cards, revealed = false }: SpreadProps) {
+export default function CelticCrossSpread({ 
+  cards, 
+  revealed = false, 
+  onReveal,
+  visibleCardCount = 0 
+}: SpreadProps) {
+  if (cards.length < 10) return null;
+
   return (
     <CelticCrossContainer>
       <GridContainer>
         <div className="overlay-card">
-          <Card card={cards[0]} isRevealed={revealed} />
+          <div style={{ 
+            opacity: visibleCardCount > 1 ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: visibleCardCount > 1 ? 'auto' : 'none',
+            height: '100%',
+            zIndex: 2
+          }}>
+            <Card card={cards[1]} isRevealed={revealed} onReveal={onReveal} />
+          </div>
         </div>
+
         <div className="center-cross">
-          <Card card={cards[1]} isRevealed={revealed} />
+          <div style={{ 
+            opacity: visibleCardCount > 0 ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: visibleCardCount > 0 ? 'auto' : 'none',
+            height: '100%',
+            zIndex: 1
+          }}>
+            <Card card={cards[0]} isRevealed={revealed} onReveal={onReveal} />
+          </div>
         </div>
+
         <div className="below">
-          <Card card={cards[2]} isRevealed={revealed} />
+          <div style={{ 
+            opacity: visibleCardCount > 2 ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: visibleCardCount > 2 ? 'auto' : 'none',
+            height: '100%'
+          }}>
+            <Card card={cards[2]} isRevealed={revealed} onReveal={onReveal} />
+          </div>
         </div>
+
         <div className="left">
-          <Card card={cards[3]} isRevealed={revealed} />
+          <div style={{ 
+            opacity: visibleCardCount > 3 ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: visibleCardCount > 3 ? 'auto' : 'none',
+            height: '100%'
+          }}>
+            <Card card={cards[3]} isRevealed={revealed} onReveal={onReveal} />
+          </div>
         </div>
+
         <div className="above">
-          <Card card={cards[4]} isRevealed={revealed} />
+          <div style={{ 
+            opacity: visibleCardCount > 4 ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: visibleCardCount > 4 ? 'auto' : 'none',
+            height: '100%'
+          }}>
+            <Card card={cards[4]} isRevealed={revealed} onReveal={onReveal} />
+          </div>
         </div>
+
         <div className="right">
-          <Card card={cards[5]} isRevealed={revealed} />
+          <div style={{ 
+            opacity: visibleCardCount > 5 ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: visibleCardCount > 5 ? 'auto' : 'none',
+            height: '100%'
+          }}>
+            <Card card={cards[5]} isRevealed={revealed} onReveal={onReveal} />
+          </div>
         </div>
-        <div className="staff first">
-          <Card card={cards[6]} isRevealed={revealed} />
-        </div>
-        <div className="staff second">
-          <Card card={cards[7]} isRevealed={revealed} />
-        </div>
-        <div className="staff third">
-          <Card card={cards[8]} isRevealed={revealed} />
-        </div>
-        <div className="staff fourth">
-          <Card card={cards[9]} isRevealed={revealed} />
-        </div>
+
+        {['first', 'second', 'third', 'fourth'].map((position, index) => (
+          <div key={index} className={`staff ${position}`}>
+            <div style={{ 
+              opacity: visibleCardCount > (9 - index) ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              pointerEvents: visibleCardCount > (9 - index) ? 'auto' : 'none',
+              height: '100%'
+            }}>
+              <Card card={cards[9 - index]} isRevealed={revealed} onReveal={onReveal} />
+            </div>
+          </div>
+        ))}
       </GridContainer>
     </CelticCrossContainer>
   );
