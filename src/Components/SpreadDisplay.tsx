@@ -78,7 +78,7 @@ export default function SpreadDisplay({
           cards={cards} 
           revealed={revealed} 
           visibleCardCount={delayedVisibleCount}
-          onReveal={handleCardReveal} 
+          onReveal={() => handleCardReveal()} 
         />;
       default:
         return null;
