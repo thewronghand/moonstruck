@@ -1,9 +1,11 @@
+import styled from 'styled-components';
 import { DrawnTarotCard } from '../../Types/tarotCard';
 import Card from '../Card';
 import { 
   CrossContainer,
   GridContainer 
 } from './styles/FiveCardCross.styles'
+import { motion } from 'motion/react';
 
 interface SpreadProps {
   cards: DrawnTarotCard[];
@@ -11,6 +13,11 @@ interface SpreadProps {
   onReveal?: () => void;
   visibleCardCount?: number;
 }
+
+const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: number }>`
+  pointer-events: ${props => props.$visibleCardCount > props.$index ? 'auto' : 'none'};
+  height: 100%;
+`;
 
 export default function FiveCardCross({ 
   cards, 
@@ -20,63 +27,50 @@ export default function FiveCardCross({
 }: SpreadProps) {
   if (cards.length < 5) return null;
 
+  const renderCard = (cardIndex: number) => (
+    <CardContainer
+      $visibleCardCount={visibleCardCount}
+      $index={cardIndex}
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ 
+        y: visibleCardCount > cardIndex ? 0 : -50,
+        opacity: visibleCardCount > cardIndex ? 1 : 0
+      }}
+      transition={{
+        duration: 0.5,
+        ease: "easeOut"
+      }}
+    >
+      <Card 
+        card={cards[cardIndex]} 
+        isRevealed={revealed} 
+        onReveal={cardIndex === 4 ? onReveal : undefined}
+      />
+    </CardContainer>
+  );
+
   return (
     <CrossContainer>
       <GridContainer>
         <div className="empty" />
         <div className="card-slot">
-          <div style={{ 
-            opacity: visibleCardCount > 4 ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-            pointerEvents: visibleCardCount > 4 ? 'auto' : 'none',
-            height: '100%'
-          }}>
-            <Card card={cards[4]} isRevealed={revealed} onReveal={onReveal} />
-          </div>
+          {renderCard(4)}
         </div>
         <div className="empty" />
         
         <div className="card-slot">
-          <div style={{ 
-            opacity: visibleCardCount > 1 ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-            pointerEvents: visibleCardCount > 1 ? 'auto' : 'none',
-            height: '100%'
-          }}>
-            <Card card={cards[1]} isRevealed={revealed} onReveal={onReveal} />
-          </div>
+          {renderCard(1)}
         </div>
         <div className="card-slot">
-          <div style={{ 
-            opacity: visibleCardCount > 0 ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-            pointerEvents: visibleCardCount > 0 ? 'auto' : 'none',
-            height: '100%'
-          }}>
-            <Card card={cards[0]} isRevealed={revealed} onReveal={onReveal} />
-          </div>
+          {renderCard(0)}
         </div>
         <div className="card-slot">
-          <div style={{ 
-            opacity: visibleCardCount > 2 ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-            pointerEvents: visibleCardCount > 2 ? 'auto' : 'none',
-            height: '100%'
-          }}>
-            <Card card={cards[2]} isRevealed={revealed} onReveal={onReveal} />
-          </div>
+          {renderCard(2)}
         </div>
         
         <div className="empty" />
         <div className="card-slot">
-          <div style={{ 
-            opacity: visibleCardCount > 3 ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-            pointerEvents: visibleCardCount > 3 ? 'auto' : 'none',
-            height: '100%'
-          }}>
-            <Card card={cards[3]} isRevealed={revealed} onReveal={onReveal} />
-          </div>
+          {renderCard(3)}
         </div>
         <div className="empty" />
       </GridContainer>
