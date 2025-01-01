@@ -7,6 +7,7 @@ import { formatUserInputAndCardInfo } from '../utils/formatUserInputAndCardInfo'
 import { callVertexAPI } from '../api/callVertexApi';
 import SpreadDisplay from '../Components/SpreadDisplay';
 import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
+import { motion, AnimatePresence } from 'motion/react';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -42,6 +43,10 @@ const FlavorText = styled.div<{ $visible: boolean }>`
   font-size: 1.2rem;
   text-align: center;
   margin: 20px 0;
+`;
+
+const AnimatedDrawPhase = styled(motion.div)`
+  width: 100%;
 `;
 
 type DrawPhase = 'shuffle' | 'cut' | 'draw' | 'reveal';
@@ -131,10 +136,26 @@ export default function DrawPage() {
 
       {currentPhase === 'draw' && (
         <>
-          <DrawPhaseDisplay
-            onCardSelect={handleCardSelect}
-            selectedIndices={selectedCardIndices}
-          />
+          <AnimatePresence>
+            {selectedCardIndices.length < cardCount && (
+              <AnimatedDrawPhase
+                initial={{ opacity: 1, height: 'auto' }}
+                exit={{ 
+                  opacity: 0, 
+                  height: 0,
+                  transition: {
+                    opacity: { duration: 0.5, delay: 0.5 },
+                    height: { duration: 0.7, delay: 0.7 }
+                  }
+                }}
+              >
+                <DrawPhaseDisplay
+                  onCardSelect={handleCardSelect}
+                  selectedIndices={selectedCardIndices}
+                />
+              </AnimatedDrawPhase>
+            )}
+          </AnimatePresence>
           <SpreadDisplay
             cards={drawnCards}
             revealed={cardsRevealed}

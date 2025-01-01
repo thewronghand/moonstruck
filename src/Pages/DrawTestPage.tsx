@@ -5,6 +5,7 @@ import { drawRandomCards } from '../utils/drawRandomCards';
 import SpreadDisplay from '../Components/SpreadDisplay';
 import SpreadSelector from '../Components/SpreadSelector';
 import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
+import { motion, AnimatePresence } from 'motion/react';
 
 const TestPageContainer = styled.div`
   display: flex;
@@ -58,6 +59,27 @@ const CardInfo = styled.div`
   font-family: monospace;
   white-space: pre-wrap;
   word-break: break-all;
+`;
+
+const AnimatedDrawPhase = styled(motion.div)`
+  width: 100%;
+  margin-bottom: 32px;
+`;
+
+const AnimatedSpread = styled(motion.div)`
+  width: 100%;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in forwards;
+  animation-delay: 0.3s;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 `;
 
 export default function DrawTestPage() {
@@ -114,28 +136,34 @@ export default function DrawTestPage() {
         </>
       ) : (
         <>
-          {/* <CardsGrid>
-            {Array.from({ length: 78 }, (_, i) => (
-              <CardButton
-                key={i}
-                $isSelected={selectedCardIndices.includes(i)}
-                disabled={selectedCardIndices.includes(i)}
-                onClick={() => handleCardSelect(i)}
+          <AnimatePresence>
+            {selectedCardIndices.length < cardCount && (
+              <AnimatedDrawPhase
+                initial={{ opacity: 1, height: 'auto' }}
+                exit={{ 
+                  opacity: 0, 
+                  height: 0,
+                  transition: {
+                    opacity: { duration: 0.5, delay: 0.5 },
+                    height: { duration: 0.7, delay: 0.7 }
+                  }
+                }}
               >
-                {i + 1}
-              </CardButton>
-            ))}
-          </CardsGrid> */}
-          <DrawPhaseDisplay
-            onCardSelect={handleCardSelect}
-            selectedIndices={selectedCardIndices}
-          />
-          <SpreadDisplay
-            cards={drawnCards}
-            revealed={false}
-            onAllCardsRevealed={handleAllCardsRevealed}
-            visibleCardCount={selectedCardIndices.length}
-          />
+                <DrawPhaseDisplay
+                  onCardSelect={handleCardSelect}
+                  selectedIndices={selectedCardIndices}
+                />
+              </AnimatedDrawPhase>
+            )}
+          </AnimatePresence>
+          <AnimatedSpread>
+            <SpreadDisplay
+              cards={drawnCards}
+              revealed={false}
+              onAllCardsRevealed={handleAllCardsRevealed}
+              visibleCardCount={selectedCardIndices.length}
+            />
+          </AnimatedSpread>
         </>
       )}
     </TestPageContainer>
