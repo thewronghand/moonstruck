@@ -78,6 +78,7 @@ export default function DrawPage() {
           const fetchedApiResponse = await callVertexAPI(formattedQuery);
           const responseText = fetchedApiResponse.content?.[0]?.text || '';
           setApiResponse(responseText);
+          console.log(responseText);
         } catch (error) {
           console.error('API 요청 오류:', error);
           setApiResponse('API 요청에 실패했습니다.');
