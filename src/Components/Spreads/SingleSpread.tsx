@@ -28,6 +28,7 @@ export default function SingleSpread({
     <SingleSpreadContainer>
       <CardContainer 
         $visibleCardCount={visibleCardCount}
+        $index={0}
         initial={{ y: -50, opacity: 0 }}
         animate={{ 
           y: visibleCardCount > 0 ? 0 : -50,

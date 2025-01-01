@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { DrawnTarotCard } from '../Types/tarotCard';
 import {
@@ -27,31 +27,59 @@ interface SpreadDisplayProps {
 
 export default function SpreadDisplay({ 
   cards, 
-  revealed = false,
-  onAllCardsRevealed,
-  visibleCardCount = 0
+  revealed, 
+  onAllCardsRevealed, 
+  visibleCardCount = 0 
 }: SpreadDisplayProps) {
+  const [delayedVisibleCount, setDelayedVisibleCount] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
+
+  useEffect(() => {
+    if (visibleCardCount > delayedVisibleCount) {
+      const timer = setTimeout(() => {
+        setDelayedVisibleCount(visibleCardCount);
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setDelayedVisibleCount(visibleCardCount);
+    }
+  }, [visibleCardCount]);
 
   const handleCardReveal = () => {
     const newCount = revealedCount + 1;
     setRevealedCount(newCount);
     
-    if (newCount === cards.length && onAllCardsRevealed) {
-      onAllCardsRevealed();
+    if (newCount === cards.length) {
+      onAllCardsRevealed?.();
     }
   };
 
   const renderSpread = () => {
     switch (cards.length) {
       case 1:
-        return <SingleSpread cards={cards} revealed={revealed} onReveal={handleCardReveal} visibleCardCount={visibleCardCount} />;
+        return <SingleSpread cards={cards} revealed={revealed} onReveal={() => handleCardReveal()} visibleCardCount={delayedVisibleCount} />;
       case 3:
-        return <TripleSpread cards={cards} revealed={revealed} onReveal={handleCardReveal} visibleCardCount={visibleCardCount} />;
+        return <TripleSpread 
+          cards={cards} 
+          revealed={revealed} 
+          visibleCardCount={delayedVisibleCount}
+          onReveal={() => handleCardReveal()} 
+        />;
       case 5:
-        return <FiveCardCross cards={cards} revealed={revealed} onReveal={handleCardReveal} visibleCardCount={visibleCardCount} />;
+        return <FiveCardCross 
+          cards={cards} 
+          revealed={revealed} 
+          visibleCardCount={delayedVisibleCount}
+          onReveal={() => handleCardReveal()} 
+        />;
       case 10:
-        return <CelticCrossSpread cards={cards} revealed={revealed} onReveal={handleCardReveal} visibleCardCount={visibleCardCount} />;
+        return <CelticCrossSpread 
+          cards={cards} 
+          revealed={revealed} 
+          visibleCardCount={delayedVisibleCount}
+          onReveal={handleCardReveal} 
+        />;
       default:
         return null;
     }

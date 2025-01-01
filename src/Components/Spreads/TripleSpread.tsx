@@ -44,7 +44,7 @@ export default function TripleSpread({
           <Card 
             card={card} 
             isRevealed={revealed} 
-            onReveal={index === 2 ? onReveal : undefined}
+            onReveal={onReveal}
           />
         </CardContainer>
       ))}

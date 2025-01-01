@@ -41,7 +41,7 @@ export default function CelticCrossSpread({
       <Card 
         card={cards[cardIndex]} 
         isRevealed={revealed} 
-        onReveal={cardIndex === 9 ? onReveal : undefined}
+        onReveal={onReveal}
       />
     </CardContainer>
   );

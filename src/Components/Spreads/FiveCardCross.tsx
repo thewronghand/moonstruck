@@ -44,7 +44,7 @@ export default function FiveCardCross({
       <Card 
         card={cards[cardIndex]} 
         isRevealed={revealed} 
-        onReveal={cardIndex === 4 ? onReveal : undefined}
+        onReveal={onReveal}
       />
     </CardContainer>
   );
