@@ -4,6 +4,7 @@ import { DrawnTarotCard } from '../Types/tarotCard';
 import { drawRandomCards } from '../utils/drawRandomCards';
 import SpreadDisplay from '../Components/SpreadDisplay';
 import SpreadSelector from '../Components/SpreadSelector';
+import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
 
 const TestPageContainer = styled.div`
   display: flex;
@@ -28,25 +29,25 @@ const StartButton = styled.button`
   }
 `;
 
-const CardsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(13, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 1200px;
-`;
+// const CardsGrid = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(13, 1fr);
+//   gap: 8px;
+//   width: 100%;
+//   max-width: 1200px;
+// `;
 
-const CardButton = styled.button<{ $isSelected: boolean }>`
-  aspect-ratio: 1/1.4;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  opacity: ${props => props.$isSelected ? 0.5 : 1};
+// const CardButton = styled.button<{ $isSelected: boolean }>`
+//   aspect-ratio: 1/1.4;
+//   border: 1px solid #ddd;
+//   border-radius: 4px;
+//   cursor: pointer;
+//   opacity: ${props => props.$isSelected ? 0.5 : 1};
   
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
+//   &:disabled {
+//     cursor: not-allowed;
+//   }
+// `;
 
 const CardInfo = styled.div`
   width: 100%;
@@ -113,7 +114,7 @@ export default function DrawTestPage() {
         </>
       ) : (
         <>
-          <CardsGrid>
+          {/* <CardsGrid>
             {Array.from({ length: 78 }, (_, i) => (
               <CardButton
                 key={i}
@@ -124,7 +125,11 @@ export default function DrawTestPage() {
                 {i + 1}
               </CardButton>
             ))}
-          </CardsGrid>
+          </CardsGrid> */}
+          <DrawPhaseDisplay
+            onCardSelect={handleCardSelect}
+            selectedIndices={selectedCardIndices}
+          />
           <SpreadDisplay
             cards={drawnCards}
             revealed={false}

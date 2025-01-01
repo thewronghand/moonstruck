@@ -6,6 +6,7 @@ import { drawRandomCards } from '../utils/drawRandomCards';
 import { formatUserInputAndCardInfo } from '../utils/formatUserInputAndCardInfo';
 import { callVertexAPI } from '../api/callVertexApi';
 import SpreadDisplay from '../Components/SpreadDisplay';
+import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -35,34 +36,12 @@ const PhaseButton = styled.button`
   }
 `;
 
-const CardsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(13, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 1200px;
-`;
-
-const CardButton = styled.button<{ $isSelected: boolean }>`
-  aspect-ratio: 1/1.4;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  opacity: ${props => props.$isSelected ? 0.5 : 1};
-  
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
 const FlavorText = styled.div<{ $visible: boolean }>`
-  font-size: 1.2rem;
-  color: #2c3e50;
-  text-align: center;
   opacity: ${props => props.$visible ? 1 : 0};
   transition: opacity 0.5s ease;
-  margin-top: 16px;
-  font-style: italic;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 20px 0;
 `;
 
 type DrawPhase = 'shuffle' | 'cut' | 'draw' | 'reveal';
@@ -151,18 +130,10 @@ export default function DrawPage() {
 
       {currentPhase === 'draw' && (
         <>
-          <CardsGrid>
-            {Array.from({ length: 78 }, (_, i) => (
-              <CardButton
-                key={i}
-                $isSelected={selectedCardIndices.includes(i)}
-                disabled={selectedCardIndices.includes(i)}
-                onClick={() => handleCardSelect(i)}
-              >
-                {i + 1}
-              </CardButton>
-            ))}
-          </CardsGrid>
+          <DrawPhaseDisplay
+            onCardSelect={handleCardSelect}
+            selectedIndices={selectedCardIndices}
+          />
           <SpreadDisplay
             cards={drawnCards}
             revealed={cardsRevealed}
