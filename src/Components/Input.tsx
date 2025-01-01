@@ -36,7 +36,7 @@ export default function Input({ onFormSubmit }: InputProps) {
           rows={5}
           maxLength={maxLength}
         />
-        <CharCount isAtLimit={inputValue.length === maxLength}>
+        <CharCount $isAtLimit={inputValue.length === maxLength}>
           {inputValue.length}/{maxLength}
         </CharCount>
         <CommonButton 
