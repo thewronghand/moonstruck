@@ -6,6 +6,8 @@ import { drawRandomCards } from '../utils/drawRandomCards';
 import { formatUserInputAndCardInfo } from '../utils/formatUserInputAndCardInfo';
 import { callVertexAPI } from '../api/callVertexApi';
 import SpreadDisplay from '../Components/SpreadDisplay';
+import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
+import { motion, AnimatePresence } from 'motion/react';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -35,34 +37,16 @@ const PhaseButton = styled.button`
   }
 `;
 
-const CardsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(13, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 1200px;
-`;
-
-const CardButton = styled.button<{ $isSelected: boolean }>`
-  aspect-ratio: 1/1.4;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  opacity: ${props => props.$isSelected ? 0.5 : 1};
-  
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
 const FlavorText = styled.div<{ $visible: boolean }>`
-  font-size: 1.2rem;
-  color: #2c3e50;
-  text-align: center;
   opacity: ${props => props.$visible ? 1 : 0};
   transition: opacity 0.5s ease;
-  margin-top: 16px;
-  font-style: italic;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 20px 0;
+`;
+
+const AnimatedDrawPhase = styled(motion.div)`
+  width: 100%;
 `;
 
 type DrawPhase = 'shuffle' | 'cut' | 'draw' | 'reveal';
@@ -99,6 +83,7 @@ export default function DrawPage() {
           const fetchedApiResponse = await callVertexAPI(formattedQuery);
           const responseText = fetchedApiResponse.content?.[0]?.text || '';
           setApiResponse(responseText);
+          console.log(responseText);
         } catch (error) {
           console.error('API 요청 오류:', error);
           setApiResponse('API 요청에 실패했습니다.');
@@ -151,18 +136,26 @@ export default function DrawPage() {
 
       {currentPhase === 'draw' && (
         <>
-          <CardsGrid>
-            {Array.from({ length: 78 }, (_, i) => (
-              <CardButton
-                key={i}
-                $isSelected={selectedCardIndices.includes(i)}
-                disabled={selectedCardIndices.includes(i)}
-                onClick={() => handleCardSelect(i)}
+          <AnimatePresence>
+            {selectedCardIndices.length < cardCount && (
+              <AnimatedDrawPhase
+                initial={{ opacity: 1, height: 'auto' }}
+                exit={{ 
+                  opacity: 0, 
+                  height: 0,
+                  transition: {
+                    opacity: { duration: 0.5, delay: 0.5 },
+                    height: { duration: 0.7, delay: 0.7 }
+                  }
+                }}
               >
-                {i + 1}
-              </CardButton>
-            ))}
-          </CardsGrid>
+                <DrawPhaseDisplay
+                  onCardSelect={handleCardSelect}
+                  selectedIndices={selectedCardIndices}
+                />
+              </AnimatedDrawPhase>
+            )}
+          </AnimatePresence>
           <SpreadDisplay
             cards={drawnCards}
             revealed={cardsRevealed}

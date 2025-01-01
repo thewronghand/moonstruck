@@ -4,6 +4,8 @@ import { DrawnTarotCard } from '../Types/tarotCard';
 import { drawRandomCards } from '../utils/drawRandomCards';
 import SpreadDisplay from '../Components/SpreadDisplay';
 import SpreadSelector from '../Components/SpreadSelector';
+import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
+import { motion, AnimatePresence } from 'motion/react';
 
 const TestPageContainer = styled.div`
   display: flex;
@@ -28,25 +30,25 @@ const StartButton = styled.button`
   }
 `;
 
-const CardsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(13, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 1200px;
-`;
+// const CardsGrid = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(13, 1fr);
+//   gap: 8px;
+//   width: 100%;
+//   max-width: 1200px;
+// `;
 
-const CardButton = styled.button<{ $isSelected: boolean }>`
-  aspect-ratio: 1/1.4;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  opacity: ${props => props.$isSelected ? 0.5 : 1};
+// const CardButton = styled.button<{ $isSelected: boolean }>`
+//   aspect-ratio: 1/1.4;
+//   border: 1px solid #ddd;
+//   border-radius: 4px;
+//   cursor: pointer;
+//   opacity: ${props => props.$isSelected ? 0.5 : 1};
   
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
+//   &:disabled {
+//     cursor: not-allowed;
+//   }
+// `;
 
 const CardInfo = styled.div`
   width: 100%;
@@ -57,6 +59,27 @@ const CardInfo = styled.div`
   font-family: monospace;
   white-space: pre-wrap;
   word-break: break-all;
+`;
+
+const AnimatedDrawPhase = styled(motion.div)`
+  width: 100%;
+  margin-bottom: 32px;
+`;
+
+const AnimatedSpread = styled(motion.div)`
+  width: 100%;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in forwards;
+  animation-delay: 0.3s;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 `;
 
 export default function DrawTestPage() {
@@ -113,24 +136,34 @@ export default function DrawTestPage() {
         </>
       ) : (
         <>
-          <CardsGrid>
-            {Array.from({ length: 78 }, (_, i) => (
-              <CardButton
-                key={i}
-                $isSelected={selectedCardIndices.includes(i)}
-                disabled={selectedCardIndices.includes(i)}
-                onClick={() => handleCardSelect(i)}
+          <AnimatePresence>
+            {selectedCardIndices.length < cardCount && (
+              <AnimatedDrawPhase
+                initial={{ opacity: 1, height: 'auto' }}
+                exit={{ 
+                  opacity: 0, 
+                  height: 0,
+                  transition: {
+                    opacity: { duration: 0.5, delay: 0.5 },
+                    height: { duration: 0.7, delay: 0.7 }
+                  }
+                }}
               >
-                {i + 1}
-              </CardButton>
-            ))}
-          </CardsGrid>
-          <SpreadDisplay
-            cards={drawnCards}
-            revealed={false}
-            onAllCardsRevealed={handleAllCardsRevealed}
-            visibleCardCount={selectedCardIndices.length}
-          />
+                <DrawPhaseDisplay
+                  onCardSelect={handleCardSelect}
+                  selectedIndices={selectedCardIndices}
+                />
+              </AnimatedDrawPhase>
+            )}
+          </AnimatePresence>
+          <AnimatedSpread>
+            <SpreadDisplay
+              cards={drawnCards}
+              revealed={false}
+              onAllCardsRevealed={handleAllCardsRevealed}
+              visibleCardCount={selectedCardIndices.length}
+            />
+          </AnimatedSpread>
         </>
       )}
     </TestPageContainer>

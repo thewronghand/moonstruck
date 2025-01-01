@@ -1,6 +1,8 @@
 import { DrawnTarotCard } from '../../Types/tarotCard';
 import Card from '../Card';
 import { CelticCrossContainer, GridContainer } from './styles/CelticCross.styles';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 interface SpreadProps {
   cards: DrawnTarotCard[];
@@ -9,6 +11,11 @@ interface SpreadProps {
   visibleCardCount?: number;
 }
 
+const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: number }>`
+  pointer-events: ${props => props.$visibleCardCount > props.$index ? 'auto' : 'none'};
+  height: 100%;
+`;
+
 export default function CelticCrossSpread({ 
   cards, 
   revealed = false, 
@@ -16,6 +23,28 @@ export default function CelticCrossSpread({
   visibleCardCount = 0 
 }: SpreadProps) {
   if (cards.length < 10) return null;
+
+  const renderCard = (cardIndex: number) => (
+    <CardContainer
+      $visibleCardCount={visibleCardCount}
+      $index={cardIndex}
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ 
+        y: visibleCardCount > cardIndex ? 0 : -50,
+        opacity: visibleCardCount > cardIndex ? 1 : 0
+      }}
+      transition={{
+        duration: 0.5,
+        ease: "easeOut"
+      }}
+    >
+      <Card 
+        card={cards[cardIndex]} 
+        isRevealed={revealed} 
+        onReveal={onReveal}
+      />
+    </CardContainer>
+  );
 
   return (
     <CelticCrossContainer>
@@ -28,7 +57,7 @@ export default function CelticCrossSpread({
             height: '100%',
             zIndex: 2
           }}>
-            <Card card={cards[1]} isRevealed={revealed} onReveal={onReveal} />
+            {renderCard(1)}
           </div>
         </div>
 
@@ -40,7 +69,7 @@ export default function CelticCrossSpread({
             height: '100%',
             zIndex: 1
           }}>
-            <Card card={cards[0]} isRevealed={revealed} onReveal={onReveal} />
+            {renderCard(0)}
           </div>
         </div>
 
@@ -51,7 +80,7 @@ export default function CelticCrossSpread({
             pointerEvents: visibleCardCount > 2 ? 'auto' : 'none',
             height: '100%'
           }}>
-            <Card card={cards[2]} isRevealed={revealed} onReveal={onReveal} />
+            {renderCard(2)}
           </div>
         </div>
 
@@ -62,7 +91,7 @@ export default function CelticCrossSpread({
             pointerEvents: visibleCardCount > 3 ? 'auto' : 'none',
             height: '100%'
           }}>
-            <Card card={cards[3]} isRevealed={revealed} onReveal={onReveal} />
+            {renderCard(3)}
           </div>
         </div>
 
@@ -73,7 +102,7 @@ export default function CelticCrossSpread({
             pointerEvents: visibleCardCount > 4 ? 'auto' : 'none',
             height: '100%'
           }}>
-            <Card card={cards[4]} isRevealed={revealed} onReveal={onReveal} />
+            {renderCard(4)}
           </div>
         </div>
 
@@ -84,7 +113,7 @@ export default function CelticCrossSpread({
             pointerEvents: visibleCardCount > 5 ? 'auto' : 'none',
             height: '100%'
           }}>
-            <Card card={cards[5]} isRevealed={revealed} onReveal={onReveal} />
+            {renderCard(5)}
           </div>
         </div>
 
@@ -96,7 +125,7 @@ export default function CelticCrossSpread({
               pointerEvents: visibleCardCount > (9 - index) ? 'auto' : 'none',
               height: '100%'
             }}>
-              <Card card={cards[9 - index]} isRevealed={revealed} onReveal={onReveal} />
+              {renderCard(9 - index)}
             </div>
           </div>
         ))}

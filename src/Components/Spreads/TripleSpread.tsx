@@ -1,9 +1,8 @@
+import styled from 'styled-components';
 import { DrawnTarotCard } from '../../Types/tarotCard';
 import Card from '../Card';
-import { 
-  TripleSpreadContainer,
-  CardsRow 
-} from './styles/TripleSpread.styles';
+import { TripleSpreadContainer } from './styles/TripleSpread.styles';
+import { motion } from 'motion/react';
 
 interface SpreadProps {
   cards: DrawnTarotCard[];
@@ -12,32 +11,43 @@ interface SpreadProps {
   visibleCardCount?: number;
 }
 
+const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: number }>`
+  pointer-events: ${props => props.$visibleCardCount > props.$index ? 'auto' : 'none'};
+  height: 100%;
+`;
+
 export default function TripleSpread({ 
   cards, 
   revealed = false, 
   onReveal,
-  visibleCardCount = cards.length 
+  visibleCardCount = 0
 }: SpreadProps) {
+  if (!cards.length) return null;
+
   return (
     <TripleSpreadContainer>
-      <CardsRow>
-        {cards.map((card, index) => (
-          <div 
-            key={index}
-            style={{ 
-              opacity: index < visibleCardCount ? 1 : 0,
-              transition: 'opacity 0.3s ease',
-              pointerEvents: index < visibleCardCount ? 'auto' : 'none'
-            }}
-          >
-            <Card 
-              card={card}
-              isRevealed={revealed}
-              onReveal={onReveal}
-            />
-          </div>
-        ))}
-      </CardsRow>
+      {cards.slice(0, 3).map((card, index) => (
+        <CardContainer 
+          key={index}
+          $visibleCardCount={visibleCardCount}
+          $index={index}
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ 
+            y: visibleCardCount > index ? 0 : -50,
+            opacity: visibleCardCount > index ? 1 : 0
+          }}
+          transition={{
+            duration: 0.5,
+            ease: "easeOut"
+          }}
+        >
+          <Card 
+            card={card} 
+            isRevealed={revealed} 
+            onReveal={onReveal}
+          />
+        </CardContainer>
+      ))}
     </TripleSpreadContainer>
   );
 } 

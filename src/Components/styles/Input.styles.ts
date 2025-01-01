@@ -22,11 +22,11 @@ export const StyledTextArea = styled.textarea`
   }
 `;
 
-export const CharCount = styled.div<{ isAtLimit: boolean }>`
+export const CharCount = styled.div<{ $isAtLimit: boolean }>`
   align-self: flex-end;
   margin-bottom: 5px;
   padding-right: 8px;
-  color: ${props => props.isAtLimit ? '#ff4444' : '#666'};
+  color: ${props => props.$isAtLimit ? '#ff4444' : '#666'};
   font-size: 14px;
   transition: color 0.2s ease;
 `; 

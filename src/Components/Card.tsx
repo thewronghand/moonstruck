@@ -17,9 +17,9 @@ interface CardProps {
 export default function Card({ card, isRevealed = false, onReveal }: CardProps) {
   const [isFlipped, setIsFlipped] = useState(isRevealed);
   const isReversed = card.direction === '역방향';
-  
+
   const handleClick = () => {
-    if (!isRevealed && onReveal) {
+    if (!isFlipped && onReveal) {
       onReveal();
     }
     setIsFlipped(true);
