@@ -8,6 +8,8 @@ import { callVertexAPI } from '../api/callVertexApi';
 import SpreadDisplay from '../Components/SpreadDisplay';
 import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
 import { motion, AnimatePresence } from 'motion/react';
+import ShuffleDisplay from '../Components/ShuffleDisplay';
+import CutDisplay from '../Components/CutDisplay';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -16,25 +18,6 @@ const DrawPageContainer = styled.div`
   align-items: center;
   gap: 32px;
   padding: 20px;
-`;
-
-const PhaseButton = styled.button`
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: none;
-  background: #007bff;
-  color: white;
-  cursor: pointer;
-  font-size: 1.1rem;
-
-  &:hover {
-    background: #0056b3;
-  }
-
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
 `;
 
 const FlavorText = styled.div<{ $visible: boolean }>`
@@ -122,65 +105,69 @@ export default function DrawPage() {
 
   return (
     <DrawPageContainer>
-      {currentPhase === 'shuffle' && (
-        <PhaseButton onClick={() => handlePhaseChange('cut')}>
-          카드 섞기
-        </PhaseButton>
-      )}
-
-      {currentPhase === 'cut' && (
-        <PhaseButton onClick={() => handlePhaseChange('draw')}>
-          카드 자르기
-        </PhaseButton>
-      )}
-
-      {currentPhase === 'draw' && (
-        <>
-          <AnimatePresence>
-            {selectedCardIndices.length < cardCount && (
-              <AnimatedDrawPhase
-                initial={{ opacity: 1, height: 'auto' }}
-                exit={{ 
-                  opacity: 0, 
-                  height: 0,
-                  transition: {
-                    opacity: { duration: 0.5, delay: 0.5 },
-                    height: { duration: 0.7, delay: 0.7 }
-                  }
-                }}
-              >
-                <DrawPhaseDisplay
-                  onCardSelect={handleCardSelect}
-                  selectedIndices={selectedCardIndices}
-                />
-              </AnimatedDrawPhase>
-            )}
-          </AnimatePresence>
-          <SpreadDisplay
-            cards={drawnCards}
-            revealed={cardsRevealed}
-            onAllCardsRevealed={handleAllCardsRevealed}
-            visibleCardCount={selectedCardIndices.length}
+      <AnimatePresence mode="wait">
+        {currentPhase === 'shuffle' && (
+          <ShuffleDisplay 
+            key="shuffle"
+            onShuffleComplete={() => handlePhaseChange('cut')} 
           />
-          <FlavorText $visible={showFlavorText}>
-            이제 타로가 당신의 운명을 보여줄 것입니다...
-          </FlavorText>
-        </>
-      )}
+        )}
 
-      {currentPhase === 'reveal' && (
-        <>
-          <SpreadDisplay
-            cards={drawnCards}
-            revealed={true}
-            visibleCardCount={cardCount}
-            onAllCardsRevealed={handleAllCardsRevealed}
+        {currentPhase === 'cut' && (
+          <CutDisplay
+            key="cut"
+            onCutComplete={() => handlePhaseChange('draw')}
           />
-          <FlavorText $visible={showFlavorText}>
-            이제 타로가 당신의 운명을 보여줄 것입니다...
-          </FlavorText>
-        </>
-      )}
+        )}
+
+        {currentPhase === 'draw' && (
+          <>
+            <AnimatePresence>
+              {selectedCardIndices.length < cardCount && (
+                <AnimatedDrawPhase
+                  initial={{ opacity: 1, height: 'auto' }}
+                  exit={{ 
+                    opacity: 0, 
+                    height: 0,
+                    transition: {
+                      opacity: { duration: 0.5, delay: 0.5 },
+                      height: { duration: 0.7, delay: 0.7 }
+                    }
+                  }}
+                >
+                  <DrawPhaseDisplay
+                    onCardSelect={handleCardSelect}
+                    selectedIndices={selectedCardIndices}
+                  />
+                </AnimatedDrawPhase>
+              )}
+            </AnimatePresence>
+            <SpreadDisplay
+              cards={drawnCards}
+              revealed={cardsRevealed}
+              onAllCardsRevealed={handleAllCardsRevealed}
+              visibleCardCount={selectedCardIndices.length}
+            />
+            <FlavorText $visible={showFlavorText}>
+              이제 타로가 당신의 운명을 보여줄 것입니다...
+            </FlavorText>
+          </>
+        )}
+
+        {currentPhase === 'reveal' && (
+          <>
+            <SpreadDisplay
+              cards={drawnCards}
+              revealed={true}
+              visibleCardCount={cardCount}
+              onAllCardsRevealed={handleAllCardsRevealed}
+            />
+            <FlavorText $visible={showFlavorText}>
+              이제 타로가 당신의 운명을 보여줄 것입니다...
+            </FlavorText>
+          </>
+        )}
+      </AnimatePresence>
     </DrawPageContainer>
   );
 }
