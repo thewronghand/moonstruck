@@ -6,6 +6,7 @@ import SpreadDisplay from '../Components/SpreadDisplay';
 import SpreadSelector from '../Components/SpreadSelector';
 import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
 import { motion, AnimatePresence } from 'motion/react';
+import ShuffleDisplay from '../Components/ShuffleDisplay';
 
 const TestPageContainer = styled.div`
   display: flex;
@@ -87,6 +88,7 @@ export default function DrawTestPage() {
   const [drawnCards, setDrawnCards] = useState<DrawnTarotCard[]>([]);
   const [selectedCardIndices, setSelectedCardIndices] = useState<number[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [showShuffle, setShowShuffle] = useState(false);
 
   const handleCardCountChange = (newCardCount: number) => {
     setCardCount(newCardCount);
@@ -110,62 +112,85 @@ export default function DrawTestPage() {
     console.log('All cards revealed!');
   };
 
+  const handleShuffleComplete = () => {
+    console.log("Shuffle completed!");
+    setTimeout(() => {
+      setShowShuffle(false);
+    }, 1000);
+  };
+
   return (
     <TestPageContainer>
-      {drawnCards.length > 0 && (
-        <CardInfo>
-          {drawnCards.map((card, index) => (
-            <div key={index}>
-              {index + 1}번 카드: {card.name.ko} ({card.direction})
-            </div>
-          ))}
-        </CardInfo>
-      )}
-      
-      {!isDrawing ? (
-        <>
-          <SpreadSelector
-            cardCount={cardCount}
-            onCardCountChange={handleCardCountChange}
+      <button onClick={() => setShowShuffle(!showShuffle)}>
+        {showShuffle ? 'Hide Shuffle' : 'Show Shuffle'}
+      </button>
+
+      <AnimatePresence mode="wait">
+        {showShuffle ? (
+          <ShuffleDisplay 
+            key="shuffle"
+            onShuffleComplete={handleShuffleComplete} 
           />
-          {drawnCards.length > 0 && (
-            <StartButton onClick={handleStartDrawing}>
-              카드 뽑기 시작
-            </StartButton>
-          )}
-        </>
-      ) : (
-        <>
-          <AnimatePresence>
-            {selectedCardIndices.length < cardCount && (
-              <AnimatedDrawPhase
-                initial={{ opacity: 1, height: 'auto' }}
-                exit={{ 
-                  opacity: 0, 
-                  height: 0,
-                  transition: {
-                    opacity: { duration: 0.5, delay: 0.5 },
-                    height: { duration: 0.7, delay: 0.7 }
-                  }
-                }}
-              >
-                <DrawPhaseDisplay
-                  onCardSelect={handleCardSelect}
-                  selectedIndices={selectedCardIndices}
-                />
-              </AnimatedDrawPhase>
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {drawnCards.length > 0 && (
+              <CardInfo>
+                {drawnCards.map((card, index) => (
+                  <div key={index}>
+                    {index + 1}번 카드: {card.name.ko} ({card.direction})
+                  </div>
+                ))}
+              </CardInfo>
             )}
-          </AnimatePresence>
-          <AnimatedSpread>
-            <SpreadDisplay
-              cards={drawnCards}
-              revealed={false}
-              onAllCardsRevealed={handleAllCardsRevealed}
-              visibleCardCount={selectedCardIndices.length}
-            />
-          </AnimatedSpread>
-        </>
-      )}
+            
+            {!isDrawing ? (
+              <>
+                <SpreadSelector
+                  cardCount={cardCount}
+                  onCardCountChange={handleCardCountChange}
+                />
+                {drawnCards.length > 0 && (
+                  <StartButton onClick={handleStartDrawing}>
+                    카드 뽑기 시작
+                  </StartButton>
+                )}
+              </>
+            ) : (
+              <>
+                <AnimatedDrawPhase
+                  initial={{ opacity: 1, height: 'auto' }}
+                  exit={{ 
+                    opacity: 0, 
+                    height: 0,
+                    transition: {
+                      opacity: { duration: 0.5, delay: 0.5 },
+                      height: { duration: 0.7, delay: 0.7 }
+                    }
+                  }}
+                >
+                  <DrawPhaseDisplay
+                    onCardSelect={handleCardSelect}
+                    selectedIndices={selectedCardIndices}
+                  />
+                </AnimatedDrawPhase>
+                <AnimatedSpread>
+                  <SpreadDisplay
+                    cards={drawnCards}
+                    revealed={false}
+                    onAllCardsRevealed={handleAllCardsRevealed}
+                    visibleCardCount={selectedCardIndices.length}
+                  />
+                </AnimatedSpread>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </TestPageContainer>
   );
 } 
