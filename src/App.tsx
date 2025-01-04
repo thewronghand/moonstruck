@@ -11,6 +11,7 @@ import { createGlobalStyle } from 'styled-components';
 import React, { useRef, useEffect, useState } from 'react';
 import SpreadTestPage from './Pages/SpreadTestPage';
 import DrawTestPage from './Pages/DrawTestPage';
+import DeckTestPage from './Pages/DeckTestPage';
 
 const AppContainer = styled.div`
   max-width: 480px;
@@ -70,6 +71,7 @@ function App() {
                 <Route path="/login/:platform" element={<LoginPage />} />
                 <Route path="/spread-test" element={<SpreadTestPage />} />
                 <Route path="/draw-test" element={<DrawTestPage />} />
+                <Route path="/deck-test" element={<DeckTestPage />} />
               </Routes>
             </Router>
           </AppContainer>
