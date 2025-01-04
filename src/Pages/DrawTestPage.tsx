@@ -89,6 +89,7 @@ export default function DrawTestPage() {
   const [selectedCardIndices, setSelectedCardIndices] = useState<number[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [showShuffle, setShowShuffle] = useState(false);
+  const [isShuffleExiting, setIsShuffleExiting] = useState(false);
 
   const handleCardCountChange = (newCardCount: number) => {
     setCardCount(newCardCount);
@@ -114,24 +115,27 @@ export default function DrawTestPage() {
 
   const handleShuffleComplete = () => {
     console.log("Shuffle completed!");
+    setIsShuffleExiting(true);
     setTimeout(() => {
       setShowShuffle(false);
+      setIsShuffleExiting(false);
     }, 1000);
   };
 
   return (
     <TestPageContainer>
-      <button onClick={() => setShowShuffle(!showShuffle)}>
+      <button onClick={() => setShowShuffle(!showShuffle)} disabled={isShuffleExiting}>
         {showShuffle ? 'Hide Shuffle' : 'Show Shuffle'}
       </button>
 
       <AnimatePresence mode="wait">
-        {showShuffle ? (
+        {showShuffle && (
           <ShuffleDisplay 
             key="shuffle"
             onShuffleComplete={handleShuffleComplete} 
           />
-        ) : (
+        )}
+        {!showShuffle && !isShuffleExiting && (
           <motion.div
             key="content"
             initial={{ opacity: 0 }}
