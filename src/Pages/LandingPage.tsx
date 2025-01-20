@@ -1,8 +1,8 @@
-import { useRecoilValue } from 'recoil';
-import { userState } from '../atoms/authAtom';
+// import { useRecoilValue } from 'recoil';
+// import { userState } from '../atoms/authAtom';
 import { useNavigate } from 'react-router-dom';
-import KakaoLoginButton from '../Components/KakaoLoginButton';
-import KakaoLogoutButton from '../Components/KakaoLogoutButton';
+// import KakaoLoginButton from '../Components/KakaoLoginButton';
+// import KakaoLogoutButton from '../Components/KakaoLogoutButton';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightLeft, faCalendarDays, faUsers } from '@fortawesome/free-solid-svg-icons';
@@ -28,14 +28,13 @@ const HeroSection = styled.div`
   margin-bottom: 15px;
 `;
 
-const Subtitle = styled.p`
-  font-size: clamp(1.2rem, 3vw, 1.4rem);
-  color: black;
-  line-height: 1.6;
-  margin-bottom: 16px;
-  width: 100%;
-  
-`;
+// const Subtitle = styled.p`
+//   font-size: clamp(1.2rem, 3vw, 1.4rem);
+//   color: black;
+//   line-height: 1.6;
+//   margin-bottom: 16px;
+//   width: 100%;
+// `;
 
 const Description = styled.p`
   font-size: clamp(0.9rem, 2vw, 1rem);
@@ -102,12 +101,12 @@ const StartButton = styled.button`
   }
 `;
 
-const InfoText = styled.p`
-  color: #666;
-  font-size: 0.95rem;
-  text-align: left;
-  line-height: 1.6;
-`;
+// const InfoText = styled.p`
+//   color: #666;
+//   font-size: 0.95rem;
+//   text-align: left;
+//   line-height: 1.6;
+// `;
 
 const LogoImage = styled.img`
   width: 100%;
