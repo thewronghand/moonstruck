@@ -1,8 +1,8 @@
-import { useRecoilValue } from 'recoil';
-import { userState } from '../atoms/authAtom';
+// import { useRecoilValue } from 'recoil';
+// import { userState } from '../atoms/authAtom';
 import { useNavigate } from 'react-router-dom';
-import KakaoLoginButton from '../Components/KakaoLoginButton';
-import KakaoLogoutButton from '../Components/KakaoLogoutButton';
+// import KakaoLoginButton from '../Components/KakaoLoginButton';
+// import KakaoLogoutButton from '../Components/KakaoLogoutButton';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightLeft, faCalendarDays, faUsers } from '@fortawesome/free-solid-svg-icons';
@@ -28,14 +28,13 @@ const HeroSection = styled.div`
   margin-bottom: 15px;
 `;
 
-const Subtitle = styled.p`
-  font-size: clamp(1.2rem, 3vw, 1.4rem);
-  color: black;
-  line-height: 1.6;
-  margin-bottom: 16px;
-  width: 100%;
-  
-`;
+// const Subtitle = styled.p`
+//   font-size: clamp(1.2rem, 3vw, 1.4rem);
+//   color: black;
+//   line-height: 1.6;
+//   margin-bottom: 16px;
+//   width: 100%;
+// `;
 
 const Description = styled.p`
   font-size: clamp(0.9rem, 2vw, 1rem);
@@ -84,30 +83,30 @@ const ActionSection = styled.div`
   max-width: 400px;
 `;
 
-const StartButton = styled.button<{ $disabled?: boolean }>`
+const StartButton = styled.button`
   width: 100%;
   padding: 16px 32px;
   font-size: 1.1rem;
   font-weight: 500;
-  color: ${props => props.$disabled ? '#999' : 'white'};
-  background-color: ${props => props.$disabled ? '#eee' : 'black'};
+  color: white;
+  background-color: black;
   border: none;
   border-radius: 8px;
-  cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
+  cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
 
   &:hover {
-    transform: ${props => props.$disabled ? 'none' : 'translateY(-2px)'};
-    background-color: ${props => props.$disabled ? '#eee' : '#222'};
+    transform: translateY(-2px);
+    background-color: #222;
   }
 `;
 
-const InfoText = styled.p`
-  color: #666;
-  font-size: 0.95rem;
-  text-align: left;
-  line-height: 1.6;
-`;
+// const InfoText = styled.p`
+//   color: #666;
+//   font-size: 0.95rem;
+//   text-align: left;
+//   line-height: 1.6;
+// `;
 
 const LogoImage = styled.img`
   width: 100%;
@@ -117,19 +116,12 @@ const LogoImage = styled.img`
 `;
 
 export default function LandingPage() {
-  const user = useRecoilValue(userState);
   const navigate = useNavigate();
-
-  if (!window.Kakao.isInitialized()) {
-    window.Kakao.init(import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY);
-  }
 
   return (
     <Container>
       <HeroSection>
         <LogoImage src="/logo-typo.png" alt="Moonstruck" />
-        <Subtitle>
-        </Subtitle>
         <Description>
           당신의 고민을 입력하고, 직접 카드를 골라 미래를 점쳐보세요.
           AI 모델이 당신의 상황과 선택한 카드들을 기반으로
@@ -161,29 +153,9 @@ export default function LandingPage() {
       </HeroSection>
 
       <ActionSection>
-        {user ? (
-          <>
-            <StartButton
-              onClick={() => navigate('/query')}
-              $disabled={user.dailyCredits === 0}
-              disabled={user.dailyCredits === 0}
-            >
-              {user.dailyCredits === 0
-                ? '오늘의 크레딧을 모두 사용했습니다'
-                : '시작하기'}
-            </StartButton>
-            <KakaoLogoutButton />
-          </>
-        ) : (
-          <>
-            <InfoText>
-              로그인하고 무료 크레딧으로 타로를 시작해보세요
-              <br />
-              하루 3회까지 무료로 타로를 볼 수 있습니다
-            </InfoText>
-            <KakaoLoginButton />
-          </>
-        )}
+        <StartButton onClick={() => navigate('/query')}>
+          시작하기
+        </StartButton>
       </ActionSection>
     </Container>
   );
