@@ -41,7 +41,7 @@ export default function Input({ onFormSubmit }: InputProps) {
         </CharCount>
         <CommonButton 
           type="submit" 
-          disabled={inputValue.length > maxLength || inputValue.length === 0}
+          disabled={inputValue.length > maxLength}
         >
           운세 보기
         </CommonButton>

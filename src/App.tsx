@@ -1,7 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import LandingPage from './Pages/LandingPage';
-import HomePage from './Pages/HomePage';
 import QueryPage from './Pages/QueryPage';
 import ResultPage from './Pages/ResultPage';
 import DrawPage from './Pages/DrawPage';
@@ -57,14 +56,6 @@ function App() {
 
   const [appContainer, setAppContainer] = useState<HTMLDivElement | null>(null);
 
-  // 첫 방문 체크
-  const hasVisited = localStorage.getItem('hasVisited');
-  
-  // 첫 방문이면 localStorage에 표시
-  if (!hasVisited) {
-    localStorage.setItem('hasVisited', 'true');
-  }
-
   return (
     <RecoilRoot>
       <GlobalStyle />
@@ -73,14 +64,7 @@ function App() {
           <AppContainer ref={containerRef}>
             <Router>
               <Routes>
-                <Route 
-                  path="/" 
-                  element={
-                    hasVisited ? <Navigate to="/home" /> : <Navigate to="/landing" />
-                  } 
-                />
-                <Route path="/landing" element={<LandingPage />} />
-                <Route path="/home" element={<HomePage />} />
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/query" element={<QueryPage />} />
                 <Route path="/draw" element={<DrawPage />} />
                 <Route path="/result" element={<ResultPage />} />

@@ -1,17 +1,15 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import {
   Container,
   Section,
   Title,
-  Text,
-  HomeButton
+  Text
 } from './styles/ResultPage.styles';
 import SpreadDisplay from '../Components/SpreadDisplay';
 
 export default function ResultPage() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { userInput, apiResponse, drawnCards } = location.state || {};
 
   if (!apiResponse || !drawnCards) {
@@ -38,10 +36,6 @@ export default function ResultPage() {
         <Title>타로 해석</Title>
         <Text>{apiResponse}</Text>
       </Section>
-
-      <HomeButton onClick={() => navigate('/')}>
-        홈으로 돌아가기
-      </HomeButton>
     </Container>
   );
 }

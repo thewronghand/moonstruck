@@ -99,14 +99,7 @@ export default function DrawPage() {
   // 결과 페이지로 이동
   useEffect(() => {
     if (readyToNavigate && apiResponse) {
-      navigate('/result', {
-        replace:true, 
-        state: {
-          userInput,
-          apiResponse,
-          drawnCards 
-        } 
-      });
+      navigate('/result', { state: { userInput, apiResponse, drawnCards } });
     }
   }, [readyToNavigate, apiResponse, navigate, userInput, drawnCards]);
 
