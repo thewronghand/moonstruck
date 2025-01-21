@@ -27,3 +27,20 @@ export const Text = styled.p`
   white-space: pre-wrap;
   line-height: 1.6;
 `; 
+
+
+export const HomeButton = styled.button`
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #5f3dc4;
+  }
+`;
