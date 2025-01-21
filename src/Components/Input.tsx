@@ -36,12 +36,12 @@ export default function Input({ onFormSubmit }: InputProps) {
           rows={5}
           maxLength={maxLength}
         />
-        <CharCount isAtLimit={inputValue.length === maxLength}>
+        <CharCount $isAtLimit={inputValue.length === maxLength}>
           {inputValue.length}/{maxLength}
         </CharCount>
         <CommonButton 
           type="submit" 
-          disabled={inputValue.length > maxLength}
+          disabled={inputValue.length > maxLength || inputValue.length === 0}
         >
           운세 보기
         </CommonButton>

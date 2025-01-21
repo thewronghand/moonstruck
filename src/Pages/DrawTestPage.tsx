@@ -4,6 +4,9 @@ import { DrawnTarotCard } from '../Types/tarotCard';
 import { drawRandomCards } from '../utils/drawRandomCards';
 import SpreadDisplay from '../Components/SpreadDisplay';
 import SpreadSelector from '../Components/SpreadSelector';
+import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
+import { motion, AnimatePresence } from 'motion/react';
+import ShuffleDisplay from '../Components/ShuffleDisplay';
 
 const TestPageContainer = styled.div`
   display: flex;
@@ -28,25 +31,25 @@ const StartButton = styled.button`
   }
 `;
 
-const CardsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(13, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 1200px;
-`;
+// const CardsGrid = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(13, 1fr);
+//   gap: 8px;
+//   width: 100%;
+//   max-width: 1200px;
+// `;
 
-const CardButton = styled.button<{ $isSelected: boolean }>`
-  aspect-ratio: 1/1.4;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  opacity: ${props => props.$isSelected ? 0.5 : 1};
+// const CardButton = styled.button<{ $isSelected: boolean }>`
+//   aspect-ratio: 1/1.4;
+//   border: 1px solid #ddd;
+//   border-radius: 4px;
+//   cursor: pointer;
+//   opacity: ${props => props.$isSelected ? 0.5 : 1};
   
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
+//   &:disabled {
+//     cursor: not-allowed;
+//   }
+// `;
 
 const CardInfo = styled.div`
   width: 100%;
@@ -59,11 +62,34 @@ const CardInfo = styled.div`
   word-break: break-all;
 `;
 
+const AnimatedDrawPhase = styled(motion.div)`
+  width: 100%;
+  margin-bottom: 32px;
+`;
+
+const AnimatedSpread = styled(motion.div)`
+  width: 100%;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in forwards;
+  animation-delay: 0.3s;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
 export default function DrawTestPage() {
   const [cardCount, setCardCount] = useState(1);
   const [drawnCards, setDrawnCards] = useState<DrawnTarotCard[]>([]);
   const [selectedCardIndices, setSelectedCardIndices] = useState<number[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [showShuffle, setShowShuffle] = useState(false);
+  const [isShuffleExiting, setIsShuffleExiting] = useState(false);
 
   const handleCardCountChange = (newCardCount: number) => {
     setCardCount(newCardCount);
@@ -87,52 +113,88 @@ export default function DrawTestPage() {
     console.log('All cards revealed!');
   };
 
+  const handleShuffleComplete = () => {
+    console.log("Shuffle completed!");
+    setIsShuffleExiting(true);
+    setTimeout(() => {
+      setShowShuffle(false);
+      setIsShuffleExiting(false);
+    }, 1000);
+  };
+
   return (
     <TestPageContainer>
-      {drawnCards.length > 0 && (
-        <CardInfo>
-          {drawnCards.map((card, index) => (
-            <div key={index}>
-              {index + 1}번 카드: {card.name.ko} ({card.direction})
-            </div>
-          ))}
-        </CardInfo>
-      )}
-      
-      {!isDrawing ? (
-        <>
-          <SpreadSelector
-            cardCount={cardCount}
-            onCardCountChange={handleCardCountChange}
+      <button onClick={() => setShowShuffle(!showShuffle)} disabled={isShuffleExiting}>
+        {showShuffle ? 'Hide Shuffle' : 'Show Shuffle'}
+      </button>
+
+      <AnimatePresence mode="wait">
+        {showShuffle && (
+          <ShuffleDisplay 
+            key="shuffle"
+            onShuffleComplete={handleShuffleComplete} 
           />
-          {drawnCards.length > 0 && (
-            <StartButton onClick={handleStartDrawing}>
-              카드 뽑기 시작
-            </StartButton>
-          )}
-        </>
-      ) : (
-        <>
-          <CardsGrid>
-            {Array.from({ length: 78 }, (_, i) => (
-              <CardButton
-                key={i}
-                $isSelected={selectedCardIndices.includes(i)}
-                disabled={selectedCardIndices.includes(i)}
-                onClick={() => handleCardSelect(i)}
-              >
-                {i + 1}
-              </CardButton>
-            ))}
-          </CardsGrid>
-          <SpreadDisplay
-            cards={drawnCards}
-            revealed={false}
-            onAllCardsRevealed={handleAllCardsRevealed}
-            visibleCardCount={selectedCardIndices.length}
-          />
-        </>
-      )}
+        )}
+        {!showShuffle && !isShuffleExiting && (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {drawnCards.length > 0 && (
+              <CardInfo>
+                {drawnCards.map((card, index) => (
+                  <div key={index}>
+                    {index + 1}번 카드: {card.name.ko} ({card.direction})
+                  </div>
+                ))}
+              </CardInfo>
+            )}
+            
+            {!isDrawing ? (
+              <>
+                <SpreadSelector
+                  cardCount={cardCount}
+                  onCardCountChange={handleCardCountChange}
+                />
+                {drawnCards.length > 0 && (
+                  <StartButton onClick={handleStartDrawing}>
+                    카드 뽑기 시작
+                  </StartButton>
+                )}
+              </>
+            ) : (
+              <>
+                <AnimatedDrawPhase
+                  initial={{ opacity: 1, height: 'auto' }}
+                  exit={{ 
+                    opacity: 0, 
+                    height: 0,
+                    transition: {
+                      opacity: { duration: 0.5, delay: 0.5 },
+                      height: { duration: 0.7, delay: 0.7 }
+                    }
+                  }}
+                >
+                  <DrawPhaseDisplay
+                    onCardSelect={handleCardSelect}
+                    selectedIndices={selectedCardIndices}
+                  />
+                </AnimatedDrawPhase>
+                <AnimatedSpread>
+                  <SpreadDisplay
+                    cards={drawnCards}
+                    revealed={false}
+                    onAllCardsRevealed={handleAllCardsRevealed}
+                    visibleCardCount={selectedCardIndices.length}
+                  />
+                </AnimatedSpread>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </TestPageContainer>
   );
 } 

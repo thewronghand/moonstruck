@@ -6,6 +6,10 @@ import { drawRandomCards } from '../utils/drawRandomCards';
 import { formatUserInputAndCardInfo } from '../utils/formatUserInputAndCardInfo';
 import { callVertexAPI } from '../api/callVertexApi';
 import SpreadDisplay from '../Components/SpreadDisplay';
+import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
+import { motion, AnimatePresence } from 'motion/react';
+import ShuffleDisplay from '../Components/ShuffleDisplay';
+import CutDisplay from '../Components/CutDisplay';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -16,53 +20,16 @@ const DrawPageContainer = styled.div`
   padding: 20px;
 `;
 
-const PhaseButton = styled.button`
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: none;
-  background: #007bff;
-  color: white;
-  cursor: pointer;
-  font-size: 1.1rem;
-
-  &:hover {
-    background: #0056b3;
-  }
-
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-`;
-
-const CardsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(13, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 1200px;
-`;
-
-const CardButton = styled.button<{ $isSelected: boolean }>`
-  aspect-ratio: 1/1.4;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  opacity: ${props => props.$isSelected ? 0.5 : 1};
-  
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
 const FlavorText = styled.div<{ $visible: boolean }>`
-  font-size: 1.2rem;
-  color: #2c3e50;
-  text-align: center;
   opacity: ${props => props.$visible ? 1 : 0};
   transition: opacity 0.5s ease;
-  margin-top: 16px;
-  font-style: italic;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 20px 0;
+`;
+
+const AnimatedDrawPhase = styled(motion.div)`
+  width: 100%;
 `;
 
 type DrawPhase = 'shuffle' | 'cut' | 'draw' | 'reveal';
@@ -99,6 +66,7 @@ export default function DrawPage() {
           const fetchedApiResponse = await callVertexAPI(formattedQuery);
           const responseText = fetchedApiResponse.content?.[0]?.text || '';
           setApiResponse(responseText);
+          console.log(responseText);
         } catch (error) {
           console.error('API 요청 오류:', error);
           setApiResponse('API 요청에 실패했습니다.');
@@ -131,63 +99,82 @@ export default function DrawPage() {
   // 결과 페이지로 이동
   useEffect(() => {
     if (readyToNavigate && apiResponse) {
-      navigate('/result', { state: { userInput, apiResponse, drawnCards } });
+      navigate('/result', {
+        replace:true, 
+        state: {
+          userInput,
+          apiResponse,
+          drawnCards 
+        } 
+      });
     }
   }, [readyToNavigate, apiResponse, navigate, userInput, drawnCards]);
 
   return (
     <DrawPageContainer>
-      {currentPhase === 'shuffle' && (
-        <PhaseButton onClick={() => handlePhaseChange('cut')}>
-          카드 섞기
-        </PhaseButton>
-      )}
-
-      {currentPhase === 'cut' && (
-        <PhaseButton onClick={() => handlePhaseChange('draw')}>
-          카드 자르기
-        </PhaseButton>
-      )}
-
-      {currentPhase === 'draw' && (
-        <>
-          <CardsGrid>
-            {Array.from({ length: 78 }, (_, i) => (
-              <CardButton
-                key={i}
-                $isSelected={selectedCardIndices.includes(i)}
-                disabled={selectedCardIndices.includes(i)}
-                onClick={() => handleCardSelect(i)}
-              >
-                {i + 1}
-              </CardButton>
-            ))}
-          </CardsGrid>
-          <SpreadDisplay
-            cards={drawnCards}
-            revealed={cardsRevealed}
-            onAllCardsRevealed={handleAllCardsRevealed}
-            visibleCardCount={selectedCardIndices.length}
+      <AnimatePresence mode="wait">
+        {currentPhase === 'shuffle' && (
+          <ShuffleDisplay 
+            key="shuffle"
+            onShuffleComplete={() => handlePhaseChange('cut')} 
           />
-          <FlavorText $visible={showFlavorText}>
-            이제 타로가 당신의 운명을 보여줄 것입니다...
-          </FlavorText>
-        </>
-      )}
+        )}
 
-      {currentPhase === 'reveal' && (
-        <>
-          <SpreadDisplay
-            cards={drawnCards}
-            revealed={true}
-            visibleCardCount={cardCount}
-            onAllCardsRevealed={handleAllCardsRevealed}
+        {currentPhase === 'cut' && (
+          <CutDisplay
+            key="cut"
+            onCutComplete={() => handlePhaseChange('draw')}
           />
-          <FlavorText $visible={showFlavorText}>
-            이제 타로가 당신의 운명을 보여줄 것입니다...
-          </FlavorText>
-        </>
-      )}
+        )}
+
+        {currentPhase === 'draw' && (
+          <>
+            <AnimatePresence>
+              {selectedCardIndices.length < cardCount && (
+                <AnimatedDrawPhase
+                  initial={{ opacity: 1, height: 'auto' }}
+                  exit={{ 
+                    opacity: 0, 
+                    height: 0,
+                    transition: {
+                      opacity: { duration: 0.5, delay: 0.5 },
+                      height: { duration: 0.7, delay: 0.7 }
+                    }
+                  }}
+                >
+                  <DrawPhaseDisplay
+                    onCardSelect={handleCardSelect}
+                    selectedIndices={selectedCardIndices}
+                  />
+                </AnimatedDrawPhase>
+              )}
+            </AnimatePresence>
+            <SpreadDisplay
+              cards={drawnCards}
+              revealed={cardsRevealed}
+              onAllCardsRevealed={handleAllCardsRevealed}
+              visibleCardCount={selectedCardIndices.length}
+            />
+            <FlavorText $visible={showFlavorText}>
+              이제 타로가 당신의 운명을 보여줄 것입니다...
+            </FlavorText>
+          </>
+        )}
+
+        {currentPhase === 'reveal' && (
+          <>
+            <SpreadDisplay
+              cards={drawnCards}
+              revealed={true}
+              visibleCardCount={cardCount}
+              onAllCardsRevealed={handleAllCardsRevealed}
+            />
+            <FlavorText $visible={showFlavorText}>
+              이제 타로가 당신의 운명을 보여줄 것입니다...
+            </FlavorText>
+          </>
+        )}
+      </AnimatePresence>
     </DrawPageContainer>
   );
 }
