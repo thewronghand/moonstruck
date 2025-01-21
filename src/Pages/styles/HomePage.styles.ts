@@ -32,16 +32,17 @@ export const ServiceGrid = styled.div`
   max-width: 1200px;
 `;
 
-export const ServiceCard = styled.div`
+export const ServiceCard = styled.div<{ disabled?: boolean }>`
   background: white;
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   transition: transform 0.2s ease;
+  opacity: ${props => props.disabled ? 0.6 : 1};
 
   &:hover {
-    transform: translateY(-5px);
+    transform: ${props => props.disabled ? 'none' : 'translateY(-5px)'};
   }
 
   h2 {
