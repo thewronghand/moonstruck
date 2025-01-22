@@ -7,7 +7,10 @@ import {
   Section,
   Title,
   Text,
-  HomeButton
+  HomeButton,
+  ShareSection,
+  ShareTitle,
+  ShareButton
 } from './styles/ResultPage.styles';
 import SpreadDisplay from '../Components/SpreadDisplay';
 
@@ -16,6 +19,7 @@ export default function ResultPage() {
   const navigate = useNavigate();
   const [reading, setReading] = useState<QuestionReading | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
     const fetchReading = async () => {
@@ -32,6 +36,16 @@ export default function ResultPage() {
 
     fetchReading();
   }, [readingId]);
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('링크 복사 실패:', err);
+    }
+  };
 
   if (isLoading) return <p>로딩중...</p>;
   if (!reading) return <p>결과를 찾을 수 없습니다.</p>;
@@ -56,6 +70,13 @@ export default function ResultPage() {
         <Title>타로 해석</Title>
         <Text>{reading.interpretation}</Text>
       </Section>
+
+      <ShareSection>
+        <ShareTitle>공유하기</ShareTitle>
+        <ShareButton onClick={handleCopyLink}>
+          {copySuccess ? '링크가 복사되었습니다!' : '링크 복사하기'}
+        </ShareButton>
+      </ShareSection>
 
       <HomeButton onClick={() => navigate('/')}>
         홈으로 돌아가기
