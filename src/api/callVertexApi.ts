@@ -1,7 +1,7 @@
 export async function callVertexAPI(query: string) {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/api/vertex-claude`,
+      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/vertex-claude`,
       {
         method: 'POST',
         headers: {
