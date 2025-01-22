@@ -10,6 +10,7 @@ import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
 import { motion, AnimatePresence } from 'motion/react';
 import ShuffleDisplay from '../Components/ShuffleDisplay';
 import CutDisplay from '../Components/CutDisplay';
+import { saveQuestionReading } from '../api/questionReadingApi';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -47,6 +48,7 @@ export default function DrawPage() {
   const [readyToNavigate, setReadyToNavigate] = useState(false);
   const hasFetched = useRef(false);
   const [cardsRevealed, setCardsRevealed] = useState(false);
+  const [readingId, setReadingId] = useState<string | null>(null);
 
   // API 요청 및 카드 뽑기 초기화
   useEffect(() => {
@@ -62,14 +64,22 @@ export default function DrawPage() {
 
       (async () => {
         try {
+          // 1. 타로 해석 받아오기
           const formattedQuery = formatUserInputAndCardInfo(userInput, drawnCardsResult);
           const fetchedApiResponse = await callVertexAPI(formattedQuery);
-          const responseText = fetchedApiResponse.content?.[0]?.text || '';
-          setApiResponse(responseText);
-          console.log(responseText);
+          const interpretation = fetchedApiResponse.content?.[0]?.text || '';
+          
+          // 2. DB에 저장
+          const response = await saveQuestionReading({
+            question: userInput,
+            cards: drawnCardsResult,
+            interpretation
+          });
+          setApiResponse(interpretation);
+          setReadingId(response);
         } catch (error) {
           console.error('API 요청 오류:', error);
-          setApiResponse('API 요청에 실패했습니다.');
+          setApiResponse('요청에 실패했습니다.');
         }
       })();
     }
@@ -93,22 +103,17 @@ export default function DrawPage() {
     setCardsRevealed(true);
     setTimeout(() => {
       setReadyToNavigate(true);
-    }, 1000);
+    }, 2000);
   };
 
   // 결과 페이지로 이동
   useEffect(() => {
-    if (readyToNavigate && apiResponse) {
-      navigate('/result', {
-        replace:true, 
-        state: {
-          userInput,
-          apiResponse,
-          drawnCards 
-        } 
+    if (readyToNavigate && apiResponse && readingId) {
+      navigate(`/result/${readingId}`, {
+        replace: true
       });
     }
-  }, [readyToNavigate, apiResponse, navigate, userInput, drawnCards]);
+  }, [readyToNavigate, apiResponse, readingId, navigate]);
 
   return (
     <DrawPageContainer>
