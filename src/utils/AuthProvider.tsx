@@ -18,7 +18,7 @@ export default function AuthProvider({
         try {
           const token = await firebaseUser.getIdToken();
           const response = await fetch(
-            `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/api/user/info`,
+            `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/user/info`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

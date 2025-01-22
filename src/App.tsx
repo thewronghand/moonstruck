@@ -83,7 +83,7 @@ function App() {
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/query" element={<QueryPage />} />
                 <Route path="/draw" element={<DrawPage />} />
-                <Route path="/result" element={<ResultPage />} />
+                <Route path="/result/:readingId" element={<ResultPage />} />
                 <Route path="/login/:platform" element={<LoginPage />} />
                 <Route path="/spread-test" element={<SpreadTestPage />} />
                 <Route path="/draw-test" element={<DrawTestPage />} />
