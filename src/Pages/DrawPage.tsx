@@ -110,10 +110,18 @@ export default function DrawPage() {
   useEffect(() => {
     if (readyToNavigate && apiResponse && readingId) {
       navigate(`/result/${readingId}`, {
-        replace: true
+        replace: true,
+        state: {
+          reading: {
+            question: userInput,
+            cards: drawnCards,
+            interpretation: apiResponse,
+            id: readingId
+          }
+        }
       });
     }
-  }, [readyToNavigate, apiResponse, readingId, navigate]);
+  }, [readyToNavigate, apiResponse, readingId, navigate, userInput, drawnCards]);
 
   return (
     <DrawPageContainer>

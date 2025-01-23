@@ -1,45 +1,51 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getQuestionReading } from '../api/questionReadingApi';
 import { QuestionReading } from '../Types/tarotReading';
+import QuestionReadingDisplay from '../Components/QuestionReadingDisplay';
 import {
   Container,
-  Section,
-  Title,
-  Text,
   HomeButton,
   ShareSection,
   ShareTitle,
   ShareButton
 } from './styles/ResultPage.styles';
-import SpreadDisplay from '../Components/SpreadDisplay';
+import LoadingSpinner from '../Components/LoadingSpinner';
 
 export default function ResultPage() {
   const { readingId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [reading, setReading] = useState<QuestionReading | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  // location.state에서 reading 데이터를 받거나, 없으면 null로 초기화
+  const [reading, setReading] = useState<QuestionReading | null>(
+    location.state?.reading || null
+  );
+  const [isLoading, setIsLoading] = useState(!location.state?.reading);
   const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
-    const fetchReading = async () => {
-      try {
-        if (!readingId) throw new Error('Reading ID is required');
-        const data = await getQuestionReading(readingId);
-        setReading(data);
-      } catch (error) {
-        console.error('결과 조회 실패:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchReading();
-  }, [readingId]);
+    // state로 받은 데이터가 없고 readingId가 있을 때만 DB 조회
+    if (!reading && readingId) {
+      const fetchReading = async () => {
+        try {
+          const data = await getQuestionReading(readingId);
+          setReading(data);
+        } catch (error) {
+          console.error('결과 조회 실패:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchReading();
+    }
+  }, [readingId, reading]);
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      // share 페이지 URL 생성
+      const shareUrl = `${window.location.origin}/share/${readingId}`;
+      await navigator.clipboard.writeText(shareUrl);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
@@ -47,30 +53,13 @@ export default function ResultPage() {
     }
   };
 
-  if (isLoading) return <p>로딩중...</p>;
+  if (isLoading) return <LoadingSpinner />;
   if (!reading) return <p>결과를 찾을 수 없습니다.</p>;
 
   return (
     <Container>
-      <Section>
-        <Title>사용자 입력</Title>
-        <Text>{reading.question}</Text>
-      </Section>
-
-      <Section>
-        <Title>뽑힌 카드</Title>
-        <SpreadDisplay 
-          cards={reading.cards} 
-          revealed={true}
-          visibleCardCount={reading.cards.length}
-        />
-      </Section>
-
-      <Section>
-        <Title>타로 해석</Title>
-        <Text>{reading.interpretation}</Text>
-      </Section>
-
+      <QuestionReadingDisplay reading={reading} />
+      
       <ShareSection>
         <ShareTitle>공유하기</ShareTitle>
         <ShareButton onClick={handleCopyLink}>
