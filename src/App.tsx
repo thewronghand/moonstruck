@@ -13,6 +13,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import SpreadTestPage from './Pages/SpreadTestPage';
 import DrawTestPage from './Pages/DrawTestPage';
 import DeckTestPage from './Pages/DeckTestPage';
+import SharePage from './Pages/SharePage';
 
 const AppContainer = styled.div`
   max-width: 480px;
@@ -88,6 +89,7 @@ function App() {
                 <Route path="/spread-test" element={<SpreadTestPage />} />
                 <Route path="/draw-test" element={<DrawTestPage />} />
                 <Route path="/deck-test" element={<DeckTestPage />} />
+                <Route path="/share/:readingId" element={<SharePage />} />
               </Routes>
             </Router>
           </AppContainer>
