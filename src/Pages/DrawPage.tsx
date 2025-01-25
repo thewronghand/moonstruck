@@ -73,7 +73,7 @@ export default function DrawPage() {
           // 1. 타로 해석 받아오기
           const fetchedApiResponse = await callVertexAPI({
             userInput,
-            cards: drawnCards,
+            cards: drawnCardsResult,
             spreadType
           });
           const interpretation = fetchedApiResponse.content?.[0]?.text || '';
