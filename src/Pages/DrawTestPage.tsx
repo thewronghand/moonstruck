@@ -7,6 +7,7 @@ import SpreadSelector from '../Components/SpreadSelector';
 import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
 import { motion, AnimatePresence } from 'motion/react';
 import ShuffleDisplay from '../Components/ShuffleDisplay';
+import { spreadOptions, SpreadType } from '../Types/spread';
 
 const TestPageContainer = styled.div`
   display: flex;
@@ -84,18 +85,19 @@ const AnimatedSpread = styled(motion.div)`
 `;
 
 export default function DrawTestPage() {
-  const [cardCount, setCardCount] = useState(1);
+  const [spreadType, setSpreadType] = useState<SpreadType>('SINGLE');
   const [drawnCards, setDrawnCards] = useState<DrawnTarotCard[]>([]);
   const [selectedCardIndices, setSelectedCardIndices] = useState<number[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [showShuffle, setShowShuffle] = useState(false);
   const [isShuffleExiting, setIsShuffleExiting] = useState(false);
 
-  const handleCardCountChange = (newCardCount: number) => {
-    setCardCount(newCardCount);
+  const handleSpreadTypeChange = (newSpreadType: SpreadType) => {
+    setSpreadType(newSpreadType);
     setSelectedCardIndices([]);
     setIsDrawing(false);
-    const cards = drawRandomCards(newCardCount);
+    const cardCount = spreadOptions.find(option => option.value === newSpreadType)?.cardCount || 1;
+    const cards = drawRandomCards(cardCount);
     setDrawnCards(cards);
   };
 
@@ -104,7 +106,8 @@ export default function DrawTestPage() {
   };
 
   const handleCardSelect = (index: number) => {
-    if (selectedCardIndices.length < cardCount) {
+    const maxCards = spreadOptions.find(option => option.value === spreadType)?.cardCount ?? 1;
+    if (selectedCardIndices.length < maxCards) {
       setSelectedCardIndices(prev => [...prev, index]);
     }
   };
@@ -155,8 +158,8 @@ export default function DrawTestPage() {
             {!isDrawing ? (
               <>
                 <SpreadSelector
-                  cardCount={cardCount}
-                  onCardCountChange={handleCardCountChange}
+                  spreadType={spreadType}
+                  onSpreadTypeChange={handleSpreadTypeChange}
                 />
                 {drawnCards.length > 0 && (
                   <StartButton onClick={handleStartDrawing}>
@@ -185,6 +188,7 @@ export default function DrawTestPage() {
                 <AnimatedSpread>
                   <SpreadDisplay
                     cards={drawnCards}
+                    spreadType={spreadType}
                     revealed={false}
                     onAllCardsRevealed={handleAllCardsRevealed}
                     visibleCardCount={selectedCardIndices.length}

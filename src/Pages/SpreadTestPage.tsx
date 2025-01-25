@@ -37,7 +37,7 @@ export default function SpreadTestPage() {
 
       <SpreadSection>
         <h2>Triple Spread</h2>
-        <TripleSpread cards={tripleCards} revealed={REVEALED} />
+        <TripleSpread cards={tripleCards} revealed={REVEALED} spreadType='TRIPLE_CHOICE' />
       </SpreadSection>
 
       <SpreadSection>
