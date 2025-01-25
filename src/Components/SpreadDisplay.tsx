@@ -61,21 +61,28 @@ export default function SpreadDisplay({
         const loadedUrls = await Promise.all(imagePromises);
         setCardImages(new Map(loadedUrls));
 
-        const imageElements = loadedUrls.map(([, url]) => {
+        const imageElements = loadedUrls.map(([id, url]) => {
           return new Promise((resolve, reject) => {
             const img = new Image();
-            img.onload = resolve;
-            img.onerror = reject;
+            img.onload = () => {
+              if (img.complete && img.naturalWidth > 0) {
+                resolve(id);
+              } else {
+                reject(new Error(`Failed to load image for card ${id}`));
+              }
+            };
+            img.onerror = () => reject(new Error(`Failed to load image for card ${id}`));
             img.src = url;
           });
         });
         
-        await Promise.all([...imageElements, new Promise(resolve => setTimeout(resolve, 100))]);
+        await Promise.all(imageElements);
         setImagesLoaded(true);
         setIsLoading(false);
       } catch (error) {
         console.error('Failed to load card images:', error);
         setIsLoading(false);
+        setTimeout(() => loadImages(), 1000);
       }
     };
 
