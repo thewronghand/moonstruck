@@ -21,13 +21,13 @@ export const spreadOptions: SpreadOption[] = [
   },
   {
     value: 'TRIPLE_TIMELINE',
-    label: "과거-현재-미래",
+    label: "트리플-타임라인",
     cardCount: 3,
     description: "세 장의 카드로 시간의 흐름에 따른 상황을 살펴보는 스프레드입니다."
   },
   {
     value: 'TRIPLE_CHOICE',
-    label: "양자택일",
+    label: "트리플-양자택일",
     cardCount: 3,
     description: "세 장의 카드로 선택의 기로에서 각 선택지의 결과를 살펴보는 스프레드입니다."
   },
