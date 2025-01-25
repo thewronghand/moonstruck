@@ -3,9 +3,11 @@ import { DrawnTarotCard } from '../../Types/tarotCard';
 import Card from '../Card';
 import { TripleSpreadContainer } from './styles/TripleSpread.styles';
 import { motion } from 'motion/react';
+import { SpreadType } from '../../Types/spread';
 
 interface SpreadProps {
   cards: DrawnTarotCard[];
+  spreadType: SpreadType;
   revealed?: boolean;
   onReveal?: () => void;
   visibleCardCount?: number;
@@ -18,15 +20,20 @@ const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: nu
 
 export default function TripleSpread({ 
   cards, 
+  spreadType,
   revealed = false, 
   onReveal,
   visibleCardCount = 0
 }: SpreadProps) {
   if (!cards.length) return null;
 
+  const orderedCards = spreadType === 'TRIPLE_CHOICE' 
+    ? [cards[1], cards[0], cards[2]]
+    : cards.slice(0, 3);
+
   return (
     <TripleSpreadContainer>
-      {cards.slice(0, 3).map((card, index) => (
+      {orderedCards.map((card, index) => (
         <CardContainer 
           key={index}
           $visibleCardCount={visibleCardCount}

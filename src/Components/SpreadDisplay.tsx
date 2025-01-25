@@ -71,6 +71,7 @@ export default function SpreadDisplay({
       case 'TRIPLE_CHOICE':
         return <TripleSpread 
           cards={cards} 
+          spreadType={spreadType}
           revealed={revealed} 
           visibleCardCount={delayedVisibleCount}
           onReveal={handleCardReveal} 
