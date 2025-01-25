@@ -1,3 +1,5 @@
+import { DrawnTarotCard } from "./tarotCard";
+
 export type SpreadType = 
   | 'SINGLE' 
   | 'TRIPLE_TIMELINE'
@@ -43,4 +45,16 @@ export const spreadOptions: SpreadOption[] = [
     cardCount: 10,
     description: "가장 상세한 해석을 제공하는 전통적인 스프레드로, 질문자의 상황을 다각도로 살펴봅니다."
   }
-]; 
+];
+
+export interface SpreadProps {
+  cards: DrawnTarotCard[];
+  cardImages: Map<number, string>;
+  revealed?: boolean;
+  onReveal?: () => void;
+  visibleCardCount?: number;
+}
+
+export interface TripleSpreadProps extends SpreadProps {
+  spreadType: 'TRIPLE_TIMELINE' | 'TRIPLE_CHOICE';
+} 

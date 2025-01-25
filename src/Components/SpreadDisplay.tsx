@@ -8,6 +8,8 @@ import {
   FiveCardCross,
   CelticCrossSpread
 } from './Spreads';
+import { getCardImageUrl } from '../utils/getCardImageUrl';
+import LoadingSpinner from './LoadingSpinner';
 
 const SpreadContainer = styled.div`
   width: 100%;
@@ -17,6 +19,14 @@ const SpreadContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 24px;
+`;
+
+const LoaderContainer = styled.div`
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 interface SpreadDisplayProps {
@@ -34,20 +44,50 @@ export default function SpreadDisplay({
   onAllCardsRevealed, 
   visibleCardCount = 0 
 }: SpreadDisplayProps) {
-  const [delayedVisibleCount, setDelayedVisibleCount] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
+  const [cardImages, setCardImages] = useState<Map<number, string>>(new Map());
+  const [isLoading, setIsLoading] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   useEffect(() => {
-    if (visibleCardCount > delayedVisibleCount) {
-      const timer = setTimeout(() => {
-        setDelayedVisibleCount(visibleCardCount);
-      }, 300);
-      
-      return () => clearTimeout(timer);
-    } else {
-      setDelayedVisibleCount(visibleCardCount);
-    }
-  }, [visibleCardCount, delayedVisibleCount]);
+    const loadImages = async () => {
+      setIsLoading(true);
+      setImagesLoaded(false);
+      try {
+        const imagePromises = cards.map(async card => {
+          const url = await getCardImageUrl(card.id);
+          return [card.id, url] as const;
+        });
+        const loadedUrls = await Promise.all(imagePromises);
+        setCardImages(new Map(loadedUrls));
+
+        const imageElements = loadedUrls.map(([id, url]) => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+              if (img.complete && img.naturalWidth > 0) {
+                resolve(id);
+              } else {
+                reject(new Error(`Failed to load image for card ${id}`));
+              }
+            };
+            img.onerror = () => reject(new Error(`Failed to load image for card ${id}`));
+            img.src = url;
+          });
+        });
+        
+        await Promise.all(imageElements);
+        setImagesLoaded(true);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to load card images:', error);
+        setIsLoading(false);
+        setTimeout(() => loadImages(), 1000);
+      }
+    };
+
+    loadImages();
+  }, [cards]);
 
   const handleCardReveal = () => {
     const newCount = revealedCount + 1;
@@ -63,37 +103,51 @@ export default function SpreadDisplay({
       case 'SINGLE':
         return <SingleSpread 
           cards={cards} 
+          cardImages={cardImages}
           revealed={revealed} 
           onReveal={handleCardReveal} 
-          visibleCardCount={delayedVisibleCount} 
+          visibleCardCount={visibleCardCount} 
         />;
       case 'TRIPLE_TIMELINE':
       case 'TRIPLE_CHOICE':
         return <TripleSpread 
           cards={cards} 
+          cardImages={cardImages}
           spreadType={spreadType}
           revealed={revealed} 
-          visibleCardCount={delayedVisibleCount}
+          visibleCardCount={visibleCardCount}
           onReveal={handleCardReveal} 
         />;
       case 'FIVE_CARD_CROSS':
         return <FiveCardCross 
           cards={cards} 
+          cardImages={cardImages}
           revealed={revealed} 
-          visibleCardCount={delayedVisibleCount}
+          visibleCardCount={visibleCardCount}
           onReveal={handleCardReveal} 
         />;
       case 'CELTIC_CROSS':
         return <CelticCrossSpread 
           cards={cards} 
+          cardImages={cardImages}
           revealed={revealed} 
-          visibleCardCount={delayedVisibleCount}
+          visibleCardCount={visibleCardCount}
           onReveal={handleCardReveal} 
         />;
       default:
         return null;
     }
   };
+
+  if (isLoading || !imagesLoaded) {
+    return (
+      <SpreadContainer>
+        <LoaderContainer>
+          <LoadingSpinner />
+        </LoaderContainer>
+      </SpreadContainer>
+    );
+  }
 
   return (
     <SpreadContainer>

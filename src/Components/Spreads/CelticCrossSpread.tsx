@@ -1,15 +1,9 @@
-import { DrawnTarotCard } from '../../Types/tarotCard';
 import Card from '../Card';
 import { CelticCrossContainer, GridContainer } from './styles/CelticCross.styles';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { SpreadProps } from '../../Types/spread';
 
-interface SpreadProps {
-  cards: DrawnTarotCard[];
-  revealed?: boolean;
-  onReveal?: () => void;
-  visibleCardCount?: number;
-}
 
 const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: number }>`
   pointer-events: ${props => props.$visibleCardCount > props.$index ? 'auto' : 'none'};
@@ -20,7 +14,8 @@ export default function CelticCrossSpread({
   cards, 
   revealed = false, 
   onReveal,
-  visibleCardCount = 0 
+  visibleCardCount = 0,
+  cardImages
 }: SpreadProps) {
   if (cards.length < 10) return null;
 
@@ -42,6 +37,7 @@ export default function CelticCrossSpread({
         card={cards[cardIndex]} 
         isRevealed={revealed} 
         onReveal={onReveal}
+        imageUrl={cardImages.get(cards[cardIndex].id) || ''}
       />
     </CardContainer>
   );

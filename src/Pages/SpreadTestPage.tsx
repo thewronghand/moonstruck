@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { SingleSpread, TripleSpread, FiveCardCross, CelticCrossSpread } from '../Components/Spreads';
+import SpreadDisplay from '../Components/SpreadDisplay';
 import { drawRandomCards } from '../utils/drawRandomCards';
+import LoadingSpinner from '../Components/LoadingSpinner';
+import { DrawnTarotCard } from '../Types/tarotCard';
 
 const TestPageContainer = styled.div`
   display: flex;
@@ -23,31 +26,74 @@ const SpreadSection = styled.div`
 const REVEALED = true;
 
 export default function SpreadTestPage() {
-  const singleCards = drawRandomCards(1);
-  const tripleCards = drawRandomCards(3);
-  const fiveCards = drawRandomCards(5);
-  const tenCards = drawRandomCards(10);
+  const [isLoading, setIsLoading] = useState(true);
+  const [spreads, setSpreads] = useState<{
+    single: DrawnTarotCard[];
+    triple: DrawnTarotCard[];
+    five: DrawnTarotCard[];
+    ten: DrawnTarotCard[];
+  }>({
+    single: [],
+    triple: [],
+    five: [],
+    ten: []
+  });
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 한 번만 카드를 뽑음
+    setSpreads({
+      single: drawRandomCards(1),
+      triple: drawRandomCards(3),
+      five: drawRandomCards(5),
+      ten: drawRandomCards(10)
+    });
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <TestPageContainer>
       <SpreadSection>
         <h2>Single Spread</h2>
-        <SingleSpread cards={singleCards} revealed={REVEALED} />
+        <SpreadDisplay 
+          cards={spreads.single} 
+          spreadType="SINGLE"
+          revealed={REVEALED} 
+          visibleCardCount={1}
+        />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Triple Spread</h2>
-        <TripleSpread cards={tripleCards} revealed={REVEALED} spreadType='TRIPLE_CHOICE' />
+        <SpreadDisplay 
+          cards={spreads.triple} 
+          spreadType="TRIPLE_CHOICE"
+          revealed={REVEALED} 
+          visibleCardCount={3}
+        />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Five Card Cross</h2>
-        <FiveCardCross cards={fiveCards} revealed={REVEALED} />
+        <SpreadDisplay 
+          cards={spreads.five} 
+          spreadType="FIVE_CARD_CROSS"
+          revealed={REVEALED}
+          visibleCardCount={5}
+        />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Celtic Cross</h2>
-        <CelticCrossSpread cards={tenCards} revealed={REVEALED} />
+        <SpreadDisplay 
+          cards={spreads.ten} 
+          spreadType="CELTIC_CROSS"
+          revealed={REVEALED}
+          visibleCardCount={10}
+        />
       </SpreadSection>
     </TestPageContainer>
   );

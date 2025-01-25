@@ -10,11 +10,17 @@ import {
 
 interface CardProps {
   card: DrawnTarotCard;
+  imageUrl: string;
   isRevealed?: boolean;
   onReveal?: () => void;
 }
 
-export default function Card({ card, isRevealed = false, onReveal }: CardProps) {
+export default function Card({ 
+  card, 
+  imageUrl,
+  isRevealed = false, 
+  onReveal 
+}: CardProps) {
   const [isFlipped, setIsFlipped] = useState(isRevealed);
   const isReversed = card.direction === '역방향';
 
@@ -32,14 +38,12 @@ export default function Card({ card, isRevealed = false, onReveal }: CardProps) 
           <img 
             src="/cards/default/back.webp" 
             alt="Card Back"
-            loading="lazy"
           />
         </CardBack>
         <CardFront $isReversed={isReversed}>
           <img 
-            src={`/cards/default/${card.id}.webp`} 
+            src={imageUrl}
             alt={card.name.ko}
-            loading="lazy"
           />
           <CardName>
             <div>{card.name.ko}</div>

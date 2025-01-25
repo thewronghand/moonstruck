@@ -8,7 +8,7 @@ import {
   HomeButton,
   ShareSection,
   ShareTitle,
-  ShareButton
+  ShareButton,
 } from './styles/ResultPage.styles';
 import LoadingSpinner from '../Components/LoadingSpinner';
 
@@ -53,7 +53,14 @@ export default function ResultPage() {
     }
   };
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) {
+    return (
+      <>
+        <LoadingSpinner />
+      </>
+    );
+  }
+
   if (!reading) return <p>결과를 찾을 수 없습니다.</p>;
 
   return (
