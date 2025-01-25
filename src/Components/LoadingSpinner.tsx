@@ -9,9 +9,9 @@ const SpinnerContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 16px;
-  min-height: 100vh;
+  min-height: inherit;
   width: 100%;
-  background-color: white;
+  background-color: transparent;
 `;
 
 const SpinnerText = styled.p`

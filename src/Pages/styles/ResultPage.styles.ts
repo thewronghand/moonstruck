@@ -54,3 +54,14 @@ export const ShareButton = styled.button`
     background-color: #e0e0e0;
   }
 `;
+
+export const PageSpinnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 100vh;
+  width: 100%;
+  background-color: white;
+`;
