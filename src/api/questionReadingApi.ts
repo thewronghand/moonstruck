@@ -1,10 +1,17 @@
 import { DrawnTarotCard } from "../Types/tarotCard";
+import { SpreadType } from "../Types/spread";
 
-export async function saveQuestionReading(data: {
+export const saveQuestionReading = async ({
+  question,
+  cards,
+  interpretation,
+  spreadType,
+}: {
   question: string;
   cards: DrawnTarotCard[];
   interpretation: string;
-}) {
+  spreadType: SpreadType;
+}) => {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/question-reading/save`,
@@ -13,7 +20,7 @@ export async function saveQuestionReading(data: {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ question, cards, interpretation, spreadType })
       }
     );
 
