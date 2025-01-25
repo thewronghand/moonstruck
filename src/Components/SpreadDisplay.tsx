@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { DrawnTarotCard } from '../Types/tarotCard';
+import { SpreadType } from '../Types/spread';
 import {
   SingleSpread,
   TripleSpread,
@@ -20,6 +21,7 @@ const SpreadContainer = styled.div`
 
 interface SpreadDisplayProps {
   cards: DrawnTarotCard[];
+  spreadType: SpreadType;
   revealed?: boolean;
   onAllCardsRevealed?: () => void;
   visibleCardCount?: number;
@@ -27,6 +29,7 @@ interface SpreadDisplayProps {
 
 export default function SpreadDisplay({ 
   cards, 
+  spreadType,
   revealed, 
   onAllCardsRevealed, 
   visibleCardCount = 0 
@@ -56,29 +59,36 @@ export default function SpreadDisplay({
   };
 
   const renderSpread = () => {
-    switch (cards.length) {
-      case 1:
-        return <SingleSpread cards={cards} revealed={revealed} onReveal={() => handleCardReveal()} visibleCardCount={delayedVisibleCount} />;
-      case 3:
-        return <TripleSpread 
+    switch (spreadType) {
+      case 'SINGLE':
+        return <SingleSpread 
           cards={cards} 
           revealed={revealed} 
-          visibleCardCount={delayedVisibleCount}
-          onReveal={() => handleCardReveal()} 
+          onReveal={handleCardReveal} 
+          visibleCardCount={delayedVisibleCount} 
         />;
-      case 5:
+      case 'TRIPLE_TIMELINE':
+      case 'TRIPLE_CHOICE':
+        return <TripleSpread 
+          cards={cards} 
+          spreadType={spreadType}
+          revealed={revealed} 
+          visibleCardCount={delayedVisibleCount}
+          onReveal={handleCardReveal} 
+        />;
+      case 'FIVE_CARD_CROSS':
         return <FiveCardCross 
           cards={cards} 
           revealed={revealed} 
           visibleCardCount={delayedVisibleCount}
-          onReveal={() => handleCardReveal()} 
+          onReveal={handleCardReveal} 
         />;
-      case 10:
+      case 'CELTIC_CROSS':
         return <CelticCrossSpread 
           cards={cards} 
           revealed={revealed} 
           visibleCardCount={delayedVisibleCount}
-          onReveal={() => handleCardReveal()} 
+          onReveal={handleCardReveal} 
         />;
       default:
         return null;

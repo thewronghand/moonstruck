@@ -11,39 +11,11 @@ import {
   Tooltip,
   ArrowIcon
 } from './styles/SpreadSelector.styles';
-
-interface SpreadOption {
-  value: number;
-  label: string;
-  description: string;
-}
-
-const spreadOptions: SpreadOption[] = [
-  {
-    value: 1,
-    label: "싱글",
-    description: "하나의 카드로 간단한 질문에 대한 답을 얻을 수 있는 기본적인 스프레드입니다."
-  },
-  {
-    value: 3,
-    label: "트리플",
-    description: "세 장의 카드로 질문자의 상황을 살펴보는 스프레드입니다."
-  },
-  {
-    value: 5,
-    label: "파이브 카드 크로스",
-    description: "다섯 장의 카드로 상황을 종합적으로 분석합니다."
-  },
-  {
-    value: 10,
-    label: "켈틱 크로스",
-    description: "가장 상세한 해석을 제공하는 전통적인 스프레드로, 질문자의 상황을 다각도로 살펴봅니다."
-  }
-];
+import { SpreadType, spreadOptions } from '../Types/spread';
 
 interface SpreadSelectorProps {
-  cardCount: number;
-  onCardCountChange: (newCardCount: number) => void;
+  spreadType: SpreadType;
+  onSpreadTypeChange: (newSpreadType: SpreadType) => void;
 }
 
 interface TooltipProps {
@@ -76,12 +48,12 @@ const TooltipPortal = ({ description, iconRef }: TooltipProps) => {
 };
 
 export default function SpreadSelector({
-  cardCount,
-  onCardCountChange,
+  spreadType,
+  onSpreadTypeChange,
 }: SpreadSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
-  const iconRefs = useRef<{ [key: number]: React.RefObject<HTMLSpanElement> }>({});
+  const iconRefs = useRef<{ [key in SpreadType]?: React.RefObject<HTMLSpanElement> }>({});
 
   spreadOptions.forEach(option => {
     if (!iconRefs.current[option.value]) {
@@ -89,10 +61,10 @@ export default function SpreadSelector({
     }
   });
 
-  const selectedOption = spreadOptions.find(option => option.value === cardCount) || spreadOptions[0];
+  const selectedOption = spreadOptions.find(option => option.value === spreadType) || spreadOptions[0];
 
-  const handleOptionClick = (value: number) => {
-    onCardCountChange(value);
+  const handleOptionClick = (value: SpreadType) => {
+    onSpreadTypeChange(value);
     setIsOpen(false);
   };
 
@@ -111,19 +83,19 @@ export default function SpreadSelector({
           {spreadOptions.map((option) => (
             <Option
               key={option.value}
-              $isSelected={cardCount === option.value}
+              $isSelected={spreadType === option.value}
               onClick={() => handleOptionClick(option.value)}
             >
               {option.label}
               <InfoIcon
                 ref={iconRefs.current[option.value]}
-                onMouseEnter={() => setActiveTooltip(option.value.toString())}
+                onMouseEnter={() => setActiveTooltip(option.value)}
                 onMouseLeave={() => setActiveTooltip(null)}
               />
-              {activeTooltip === option.value.toString() && (
+              {activeTooltip === option.value && (
                 <TooltipPortal
                   description={option.description}
-                  iconRef={iconRefs.current[option.value]}
+                  iconRef={iconRefs.current[option.value]!}
                 />
               )}
             </Option>

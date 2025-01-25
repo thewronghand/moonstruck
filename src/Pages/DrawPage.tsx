@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { DrawnTarotCard } from '../Types/tarotCard';
 import { drawRandomCards } from '../utils/drawRandomCards';
-import { formatUserInputAndCardInfo } from '../utils/formatUserInputAndCardInfo';
 import { callVertexAPI } from '../api/callVertexApi';
 import SpreadDisplay from '../Components/SpreadDisplay';
 import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
@@ -11,6 +10,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import ShuffleDisplay from '../Components/ShuffleDisplay';
 import CutDisplay from '../Components/CutDisplay';
 import { saveQuestionReading } from '../api/questionReadingApi';
+import type { SpreadType } from '../Types/spread';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -35,10 +35,16 @@ const AnimatedDrawPhase = styled(motion.div)`
 
 type DrawPhase = 'shuffle' | 'cut' | 'draw' | 'reveal';
 
+interface LocationState {
+  userInput: string;
+  spreadType: SpreadType;
+  cardCount: number;
+}
+
 export default function DrawPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userInput, cardCount } = location.state || {};
+  const { userInput, spreadType, cardCount } = (location.state || {}) as LocationState;
 
   const [currentPhase, setCurrentPhase] = useState<DrawPhase>('shuffle');
   const [drawnCards, setDrawnCards] = useState<DrawnTarotCard[]>([]);
@@ -52,7 +58,7 @@ export default function DrawPage() {
 
   // API 요청 및 카드 뽑기 초기화
   useEffect(() => {
-    if (!userInput || !cardCount) {
+    if (!userInput || !spreadType || !cardCount) {
       navigate('/');
       return;
     }
@@ -65,15 +71,19 @@ export default function DrawPage() {
       (async () => {
         try {
           // 1. 타로 해석 받아오기
-          const formattedQuery = formatUserInputAndCardInfo(userInput, drawnCardsResult);
-          const fetchedApiResponse = await callVertexAPI(formattedQuery);
+          const fetchedApiResponse = await callVertexAPI({
+            userInput,
+            cards: drawnCardsResult,
+            spreadType
+          });
           const interpretation = fetchedApiResponse.content?.[0]?.text || '';
           
           // 2. DB에 저장
           const response = await saveQuestionReading({
             question: userInput,
-            cards: drawnCardsResult,
-            interpretation
+            cards: drawnCards,
+            interpretation,
+            spreadType
           });
           setApiResponse(interpretation);
           setReadingId(response);
@@ -83,7 +93,7 @@ export default function DrawPage() {
         }
       })();
     }
-  }, [userInput, cardCount, navigate]);
+  }, [userInput, spreadType, cardCount, navigate]);
 
   // 페이즈 전환 핸들러
   const handlePhaseChange = (phase: DrawPhase) => {
@@ -116,12 +126,13 @@ export default function DrawPage() {
             question: userInput,
             cards: drawnCards,
             interpretation: apiResponse,
-            id: readingId
+            id: readingId,
+            spreadType
           }
         }
       });
     }
-  }, [readyToNavigate, apiResponse, readingId, navigate, userInput, drawnCards]);
+  }, [readyToNavigate, apiResponse, readingId, navigate, userInput, drawnCards, spreadType]);
 
   return (
     <DrawPageContainer>
@@ -164,6 +175,7 @@ export default function DrawPage() {
             </AnimatePresence>
             <SpreadDisplay
               cards={drawnCards}
+              spreadType={spreadType}
               revealed={cardsRevealed}
               onAllCardsRevealed={handleAllCardsRevealed}
               visibleCardCount={selectedCardIndices.length}
@@ -178,6 +190,7 @@ export default function DrawPage() {
           <>
             <SpreadDisplay
               cards={drawnCards}
+              spreadType={spreadType}
               revealed={true}
               visibleCardCount={cardCount}
               onAllCardsRevealed={handleAllCardsRevealed}

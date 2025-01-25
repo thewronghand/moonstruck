@@ -1,4 +1,13 @@
-export async function callVertexAPI(query: string) {
+import type { DrawnTarotCard } from '../Types/tarotCard';
+import type { SpreadType } from '../Types/spread';
+
+interface TarotReadingRequest {
+  userInput: string;
+  cards: DrawnTarotCard[];
+  spreadType: SpreadType;
+}
+
+export async function callVertexAPI({ userInput, cards, spreadType }: TarotReadingRequest) {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/vertex-claude`,
@@ -7,7 +16,7 @@ export async function callVertexAPI(query: string) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ userInput, cards, spreadType })
       }
     );
 
