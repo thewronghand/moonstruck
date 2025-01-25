@@ -22,6 +22,7 @@ export default function QuestionReadingDisplay({ reading }: QuestionReadingDispl
         <Title>뽑힌 카드</Title>
         <SpreadDisplay 
           cards={reading.cards} 
+          spreadType={reading.spreadType}
           revealed={true}
           visibleCardCount={reading.cards.length}
         />
