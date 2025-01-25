@@ -61,7 +61,7 @@ export default function SpreadDisplay({
         const loadedUrls = await Promise.all(imagePromises);
         setCardImages(new Map(loadedUrls));
 
-        const imageElements = loadedUrls.map(([_, url]) => {
+        const imageElements = loadedUrls.map(([, url]) => {
           return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = resolve;
@@ -148,12 +148,3 @@ export default function SpreadDisplay({
     </SpreadContainer>
   );
 }
-
-const LoadingDisplay = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  font-size: 1.2rem;
-  color: #666;
-`;
