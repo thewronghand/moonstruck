@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SingleSpread, TripleSpread, FiveCardCross, CelticCrossSpread } from '../Components/Spreads';
+import SpreadDisplay from '../Components/SpreadDisplay';
 import { drawRandomCards } from '../utils/drawRandomCards';
 
 const TestPageContainer = styled.div`
@@ -32,22 +32,42 @@ export default function SpreadTestPage() {
     <TestPageContainer>
       <SpreadSection>
         <h2>Single Spread</h2>
-        <SingleSpread cards={singleCards} revealed={REVEALED} />
+        <SpreadDisplay 
+          cards={singleCards} 
+          spreadType="SINGLE"
+          revealed={REVEALED} 
+          visibleCardCount={1}
+        />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Triple Spread</h2>
-        <TripleSpread cards={tripleCards} revealed={REVEALED} spreadType='TRIPLE_CHOICE' />
+        <SpreadDisplay 
+          cards={tripleCards} 
+          spreadType="TRIPLE_CHOICE"
+          revealed={REVEALED} 
+          visibleCardCount={3}
+        />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Five Card Cross</h2>
-        <FiveCardCross cards={fiveCards} revealed={REVEALED} />
+        <SpreadDisplay 
+          cards={fiveCards} 
+          spreadType="FIVE_CARD_CROSS"
+          revealed={REVEALED}
+          visibleCardCount={5}
+        />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Celtic Cross</h2>
-        <CelticCrossSpread cards={tenCards} revealed={REVEALED} />
+        <SpreadDisplay 
+          cards={tenCards} 
+          spreadType="CELTIC_CROSS"
+          revealed={REVEALED}
+          visibleCardCount={10}
+        />
       </SpreadSection>
     </TestPageContainer>
   );
