@@ -47,7 +47,7 @@ export default function SpreadDisplay({
     } else {
       setDelayedVisibleCount(visibleCardCount);
     }
-  }, [visibleCardCount]);
+  }, [visibleCardCount, delayedVisibleCount]);
 
   const handleCardReveal = () => {
     const newCount = revealedCount + 1;
