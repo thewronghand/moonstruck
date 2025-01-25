@@ -77,11 +77,10 @@ export default function DrawPage() {
             spreadType
           });
           const interpretation = fetchedApiResponse.content?.[0]?.text || '';
-          
           // 2. DB에 저장
           const response = await saveQuestionReading({
             question: userInput,
-            cards: drawnCards,
+            cards: drawnCardsResult,
             interpretation,
             spreadType
           });
