@@ -78,7 +78,11 @@ function App() {
                 <Route 
                   path="/" 
                   element={
-                    hasVisited ? <Navigate to="/home" /> : <Navigate to="/landing" />
+                    hasVisited ? (
+                      <Navigate to="/home" replace={true} />
+                    ) : (
+                      <Navigate to="/landing" replace={true} />
+                    )
                   } 
                 />
                 <Route path="/landing" element={<LandingPage />} />
