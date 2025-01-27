@@ -63,6 +63,7 @@ export default function SpreadTestPage() {
           spreadType="SINGLE"
           revealed={REVEALED} 
           visibleCardCount={1}
+          needsLoading={true}
         />
       </SpreadSection>
 
@@ -71,8 +72,9 @@ export default function SpreadTestPage() {
         <SpreadDisplay 
           cards={spreads.triple} 
           spreadType="TRIPLE_CHOICE"
-          revealed={REVEALED} 
+          revealed={false} 
           visibleCardCount={3}
+          needsLoading={false}
         />
       </SpreadSection>
 
@@ -83,6 +85,7 @@ export default function SpreadTestPage() {
           spreadType="FIVE_CARD_CROSS"
           revealed={REVEALED}
           visibleCardCount={5}
+          needsLoading={false}
         />
       </SpreadSection>
 
@@ -93,6 +96,7 @@ export default function SpreadTestPage() {
           spreadType="CELTIC_CROSS"
           revealed={REVEALED}
           visibleCardCount={10}
+          needsLoading={true}
         />
       </SpreadSection>
     </TestPageContainer>

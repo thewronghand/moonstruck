@@ -25,6 +25,7 @@ export default function QuestionReadingDisplay({ reading }: QuestionReadingDispl
           spreadType={reading.spreadType}
           revealed={true}
           visibleCardCount={reading.cards.length}
+          needsLoading={true}
         />
       </Section>
 
