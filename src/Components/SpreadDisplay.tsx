@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import { useState } from 'react';
 import { DrawnTarotCard } from '../Types/tarotCard';
 import { SpreadType } from '../Types/spread';
 import {
@@ -8,26 +7,9 @@ import {
   FiveCardCross,
   CelticCrossSpread
 } from './Spreads';
-import { getCardImageUrl } from '../utils/getCardImageUrl';
+import { SpreadContainer, LoaderContainer, ErrorMessage } from './styles/SpreadDisplay.styles';
 import LoadingSpinner from './LoadingSpinner';
-
-const SpreadContainer = styled.div`
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-`;
-
-const LoaderContainer = styled.div`
-  width: 100%;
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+import { useCardImages } from '../utils/hooks/useCardImages';
 
 interface SpreadDisplayProps {
   cards: DrawnTarotCard[];
@@ -35,6 +17,7 @@ interface SpreadDisplayProps {
   revealed?: boolean;
   onAllCardsRevealed?: () => void;
   visibleCardCount?: number;
+  needsLoading?: boolean;
 }
 
 export default function SpreadDisplay({ 
@@ -42,52 +25,11 @@ export default function SpreadDisplay({
   spreadType,
   revealed, 
   onAllCardsRevealed, 
-  visibleCardCount = 0 
+  visibleCardCount = 0,
+  needsLoading = false 
 }: SpreadDisplayProps) {
   const [revealedCount, setRevealedCount] = useState(0);
-  const [cardImages, setCardImages] = useState<Map<number, string>>(new Map());
-  const [isLoading, setIsLoading] = useState(true);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-
-  useEffect(() => {
-    const loadImages = async () => {
-      setIsLoading(true);
-      setImagesLoaded(false);
-      try {
-        const imagePromises = cards.map(async card => {
-          const url = await getCardImageUrl(card.id);
-          return [card.id, url] as const;
-        });
-        const loadedUrls = await Promise.all(imagePromises);
-        setCardImages(new Map(loadedUrls));
-
-        const imageElements = loadedUrls.map(([id, url]) => {
-          return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => {
-              if (img.complete && img.naturalWidth > 0) {
-                resolve(id);
-              } else {
-                reject(new Error(`Failed to load image for card ${id}`));
-              }
-            };
-            img.onerror = () => reject(new Error(`Failed to load image for card ${id}`));
-            img.src = url;
-          });
-        });
-        
-        await Promise.all(imageElements);
-        setImagesLoaded(true);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Failed to load card images:', error);
-        setIsLoading(false);
-        setTimeout(() => loadImages(), 1000);
-      }
-    };
-
-    loadImages();
-  }, [cards]);
+  const { cardImages, isLoading, isError } = useCardImages(cards, needsLoading);
 
   const handleCardReveal = () => {
     const newCount = revealedCount + 1;
@@ -98,15 +40,15 @@ export default function SpreadDisplay({
     }
   };
 
-  const renderSpread = () => {
+  const renderSpread = (cardImages: Map<number, string> = new Map()) => {
     switch (spreadType) {
       case 'SINGLE':
         return <SingleSpread 
           cards={cards} 
-          cardImages={cardImages}
           revealed={revealed} 
           onReveal={handleCardReveal} 
-          visibleCardCount={visibleCardCount} 
+          visibleCardCount={visibleCardCount}
+          cardImages={cardImages}
         />;
       case 'TRIPLE_TIMELINE':
       case 'TRIPLE_CHOICE':
@@ -139,7 +81,17 @@ export default function SpreadDisplay({
     }
   };
 
-  if (isLoading || !imagesLoaded) {
+  if (isError) {
+    return (
+      <SpreadContainer>
+        <LoaderContainer>
+          <ErrorMessage>이미지를 불러오는데 실패했습니다.</ErrorMessage>
+        </LoaderContainer>
+      </SpreadContainer>
+    );
+  }
+
+  if (needsLoading && isLoading) {
     return (
       <SpreadContainer>
         <LoaderContainer>
@@ -151,7 +103,7 @@ export default function SpreadDisplay({
 
   return (
     <SpreadContainer>
-      {renderSpread()}
+      {renderSpread(cardImages)}
     </SpreadContainer>
   );
 }

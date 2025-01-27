@@ -178,6 +178,7 @@ export default function DrawPage() {
               revealed={cardsRevealed}
               onAllCardsRevealed={handleAllCardsRevealed}
               visibleCardCount={selectedCardIndices.length}
+              needsLoading={false}
             />
             <FlavorText $visible={showFlavorText}>
               이제 타로가 당신의 운명을 보여줄 것입니다...
