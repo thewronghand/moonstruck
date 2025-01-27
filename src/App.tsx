@@ -14,6 +14,7 @@ import SpreadTestPage from './Pages/SpreadTestPage';
 import DrawTestPage from './Pages/DrawTestPage';
 import DeckTestPage from './Pages/DeckTestPage';
 import SharePage from './Pages/SharePage';
+import StaticSpreadTestPage from './Pages/StaticSpreadTestPage';
 
 const AppContainer = styled.div`
   max-width: 480px;
@@ -87,6 +88,7 @@ function App() {
                 <Route path="/result/:readingId" element={<ResultPage />} />
                 <Route path="/login/:platform" element={<LoginPage />} />
                 <Route path="/spread-test" element={<SpreadTestPage />} />
+                <Route path="/static-spread-test" element={<StaticSpreadTestPage />} />
                 <Route path="/draw-test" element={<DrawTestPage />} />
                 <Route path="/deck-test" element={<DeckTestPage />} />
                 <Route path="/share/:readingId" element={<SharePage />} />

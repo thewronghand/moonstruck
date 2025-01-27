@@ -23,32 +23,127 @@ const SpreadSection = styled.div`
   }
 `;
 
-const REVEALED = true;
+const Controls = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+`;
+
+const Button = styled.button`
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #6b4e71;
+  color: white;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+interface SpreadState {
+  cards: DrawnTarotCard[];
+  visibleCount: number;
+  revealed: boolean;
+}
+
+type Spreads = {
+  single: SpreadState;
+  triple: SpreadState;
+  five: SpreadState;
+  ten: SpreadState;
+};
+
+interface SpreadControlsProps {
+  spreadKey: keyof Spreads;
+  spread: SpreadState;
+  onDraw: (key: keyof Spreads) => void;
+  onRevealAll: (key: keyof Spreads) => void;
+  onReset: (key: keyof Spreads) => void;
+}
+
+function SpreadControls({ 
+  spreadKey, 
+  spread, 
+  onDraw, 
+  onRevealAll, 
+  onReset 
+}: SpreadControlsProps) {
+  return (
+    <Controls>
+      <Button 
+        onClick={() => onDraw(spreadKey)}
+        disabled={spread.visibleCount >= spread.cards.length}
+      >
+        카드 뽑기
+      </Button>
+      <Button 
+        onClick={() => onRevealAll(spreadKey)}
+        disabled={spread.revealed}
+      >
+        모두 공개
+      </Button>
+      <Button onClick={() => onReset(spreadKey)}>
+        리셋
+      </Button>
+    </Controls>
+  );
+}
 
 export default function SpreadTestPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [spreads, setSpreads] = useState<{
-    single: DrawnTarotCard[];
-    triple: DrawnTarotCard[];
-    five: DrawnTarotCard[];
-    ten: DrawnTarotCard[];
-  }>({
-    single: [],
-    triple: [],
-    five: [],
-    ten: []
+  const [spreads, setSpreads] = useState<Spreads>({
+    single: { cards: [], visibleCount: 0, revealed: false },
+    triple: { cards: [], visibleCount: 0, revealed: false },
+    five: { cards: [], visibleCount: 0, revealed: false },
+    ten: { cards: [], visibleCount: 0, revealed: false }
   });
 
   useEffect(() => {
-    // 컴포넌트 마운트 시 한 번만 카드를 뽑음
     setSpreads({
-      single: drawRandomCards(1),
-      triple: drawRandomCards(3),
-      five: drawRandomCards(5),
-      ten: drawRandomCards(10)
+      single: { cards: drawRandomCards(1), visibleCount: 0, revealed: false },
+      triple: { cards: drawRandomCards(3), visibleCount: 0, revealed: false },
+      five: { cards: drawRandomCards(5), visibleCount: 0, revealed: false },
+      ten: { cards: drawRandomCards(10), visibleCount: 0, revealed: false }
     });
     setIsLoading(false);
   }, []);
+
+  const handleDrawCard = (spreadKey: keyof typeof spreads) => {
+    setSpreads(prev => ({
+      ...prev,
+      [spreadKey]: {
+        ...prev[spreadKey],
+        visibleCount: Math.min(
+          prev[spreadKey].visibleCount + 1, 
+          prev[spreadKey].cards.length
+        )
+      }
+    }));
+  };
+
+  const handleRevealAll = (spreadKey: keyof typeof spreads) => {
+    setSpreads(prev => ({
+      ...prev,
+      [spreadKey]: {
+        ...prev[spreadKey],
+        revealed: true
+      }
+    }));
+  };
+
+  const handleReset = (spreadKey: keyof typeof spreads) => {
+    setSpreads(prev => ({
+      ...prev,
+      [spreadKey]: {
+        cards: drawRandomCards(prev[spreadKey].cards.length),
+        visibleCount: 0,
+        revealed: false
+      }
+    }));
+  };
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -58,44 +153,58 @@ export default function SpreadTestPage() {
     <TestPageContainer>
       <SpreadSection>
         <h2>Single Spread</h2>
+        <SpreadControls 
+          spreadKey='single'
+          spread={spreads.single}
+          onDraw={handleDrawCard}
+          onRevealAll={handleRevealAll}
+          onReset={handleReset}
+        />
         <SpreadDisplay 
-          cards={spreads.single} 
+          cards={spreads.single.cards} 
           spreadType="SINGLE"
-          revealed={REVEALED} 
-          visibleCardCount={1}
-          needsLoading={true}
+          revealed={spreads.single.revealed}
+          visibleCardCount={spreads.single.visibleCount}
+          needsLoading={false}
         />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Triple Spread</h2>
+        <SpreadControls 
+          spreadKey='triple'
+          spread={spreads.triple}
+          onDraw={handleDrawCard}
+          onRevealAll={handleRevealAll}
+          onReset={handleReset}
+        />
         <SpreadDisplay 
-          cards={spreads.triple} 
+          cards={spreads.triple.cards} 
           spreadType="TRIPLE_CHOICE"
-          revealed={false} 
-          visibleCardCount={3}
-          needsLoading={false}
+          revealed={spreads.triple.revealed}
+          visibleCardCount={spreads.triple.visibleCount}
+          needsLoading={true}
         />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Five Card Cross</h2>
         <SpreadDisplay 
-          cards={spreads.five} 
+          cards={spreads.five.cards} 
           spreadType="FIVE_CARD_CROSS"
-          revealed={REVEALED}
-          visibleCardCount={5}
-          needsLoading={false}
+          revealed={spreads.five.revealed}
+          visibleCardCount={spreads.five.visibleCount}
+          needsLoading={true}
         />
       </SpreadSection>
 
       <SpreadSection>
         <h2>Celtic Cross</h2>
         <SpreadDisplay 
-          cards={spreads.ten} 
+          cards={spreads.ten.cards} 
           spreadType="CELTIC_CROSS"
-          revealed={REVEALED}
-          visibleCardCount={10}
+          revealed={spreads.ten.revealed}
+          visibleCardCount={spreads.ten.visibleCount}
           needsLoading={true}
         />
       </SpreadSection>
