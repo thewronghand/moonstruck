@@ -53,7 +53,7 @@ export default function SharePage() {
         >
           <FontAwesomeIcon icon={faWandSparkles} />
         </AnimatedIcon>
-        MOONSTRUCK 사용해보기
+        나도 타로점 쳐보기
       </TryButton>
     </Container>
   );
