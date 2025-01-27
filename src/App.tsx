@@ -70,7 +70,7 @@ function App() {
   return (
     <RecoilRoot>
       <GlobalStyle />
-      <AuthProvider>
+      {/* <AuthProvider> */}
         <AppContainerContext.Provider value={appContainer}>
           <AppContainer ref={containerRef}>
             <Router>
@@ -100,7 +100,7 @@ function App() {
             </Router>
           </AppContainer>
         </AppContainerContext.Provider>
-      </AuthProvider>
+      {/* </AuthProvider> */}
     </RecoilRoot>
   );
 }
