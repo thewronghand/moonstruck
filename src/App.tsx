@@ -7,7 +7,7 @@ import ResultPage from './Pages/ResultPage';
 import DrawPage from './Pages/DrawPage';
 import LoginPage from './Pages/LoginPage';
 import { RecoilRoot } from 'recoil';
-import AuthProvider from './utils/AuthProvider';
+// import AuthProvider from './utils/AuthProvider';
 import { createGlobalStyle } from 'styled-components';
 import React, { useRef, useEffect, useState } from 'react';
 import SpreadTestPage from './Pages/SpreadTestPage';
