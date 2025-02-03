@@ -1,5 +1,6 @@
 import type { DrawnTarotCard } from '../Types/tarotCard';
 import type { SpreadType } from '../Types/spread';
+import { SPREAD_INFO } from '../Types/spread';
 
 interface TarotReadingRequest {
   userInput: string;
@@ -7,7 +8,21 @@ interface TarotReadingRequest {
   spreadType: SpreadType;
 }
 
-export async function callVertexAPI({ userInput, cards, spreadType }: TarotReadingRequest) {
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+export async function callVertexAPI({ 
+  userInput, 
+  cards, 
+  spreadType 
+}: TarotReadingRequest) {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/vertex-claude`,
@@ -16,12 +31,16 @@ export async function callVertexAPI({ userInput, cards, spreadType }: TarotReadi
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userInput, cards, spreadType })
+        body: JSON.stringify({ 
+          userInput, 
+          cards, 
+          spreadInfo: SPREAD_INFO[spreadType]
+        })
       }
     );
 
     if (!response.ok) {
-      throw new Error('API request failed');
+      throw new ApiError('API request failed', response.status);
     }
 
     return response.json();
