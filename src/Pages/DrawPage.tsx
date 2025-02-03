@@ -11,6 +11,7 @@ import ShuffleDisplay from '../Components/ShuffleDisplay';
 import CutDisplay from '../Components/CutDisplay';
 import { saveQuestionReading } from '../api/questionReadingApi';
 import type { SpreadType } from '../Types/spread';
+import { ApiError } from '../api/callVertexApi';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -55,6 +56,7 @@ export default function DrawPage() {
   const hasFetched = useRef(false);
   const [cardsRevealed, setCardsRevealed] = useState(false);
   const [readingId, setReadingId] = useState<string | null>(null);
+  const [error, setError] = useState<{code: string; message: string; statusCode?: number} | null>(null);
 
   // API 요청 및 카드 뽑기 초기화
   useEffect(() => {
@@ -86,9 +88,12 @@ export default function DrawPage() {
           });
           setApiResponse(interpretation);
           setReadingId(response);
-        } catch (error) {
-          console.error('API 요청 오류:', error);
-          setApiResponse('요청에 실패했습니다.');
+        } catch (err) {
+          setError({
+            code: 'API_ERROR',
+            message: err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.',
+            statusCode: err instanceof ApiError ? err.statusCode : undefined
+          });
         }
       })();
     }
@@ -117,21 +122,31 @@ export default function DrawPage() {
 
   // 결과 페이지로 이동
   useEffect(() => {
-    if (readyToNavigate && apiResponse && readingId) {
-      navigate(`/result/${readingId}`, {
-        replace: true,
-        state: {
-          reading: {
-            question: userInput,
+    if (readyToNavigate) {
+      if (error) {
+        navigate('/error', {
+          state: {
+            error,
             cards: drawnCards,
-            interpretation: apiResponse,
-            id: readingId,
             spreadType
           }
-        }
-      });
+        });
+      } else if (apiResponse && readingId) {
+        navigate(`/result/${readingId}`, {
+          replace: true,
+          state: {
+            reading: {
+              question: userInput,
+              cards: drawnCards,
+              interpretation: apiResponse,
+              id: readingId,
+              spreadType
+            }
+          }
+        });
+      }
     }
-  }, [readyToNavigate, apiResponse, readingId, navigate, userInput, drawnCards, spreadType]);
+  }, [readyToNavigate, apiResponse, readingId, error, navigate, userInput, drawnCards, spreadType]);
 
   return (
     <DrawPageContainer>
