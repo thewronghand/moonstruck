@@ -71,7 +71,7 @@ export const SPREAD_INFO: Record<SpreadType, SpreadInfo> = {
     type: 'SINGLE',
     name: '단일 카드 스프레드',
     description: '현재 상황에 대한 즉각적인 통찰을 제공합니다.',
-    positions: ['첫 번째 카드 (현재 상황에 대한 조언)']
+    positions: ['뽑힌 카드']
   },
   TRIPLE_CHOICE: {
     type: 'TRIPLE_CHOICE',
