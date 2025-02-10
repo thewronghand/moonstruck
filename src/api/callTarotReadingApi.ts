@@ -18,14 +18,14 @@ export class ApiError extends Error {
   }
 }
 
-export async function callVertexAPI({ 
+export async function callTarotReadingAPI({ 
   userInput, 
   cards, 
   spreadType 
 }: TarotReadingRequest) {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/vertex-claude`,
+      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/tarot-reading`,
       {
         method: 'POST',
         headers: {
@@ -45,7 +45,7 @@ export async function callVertexAPI({
 
     return response.json();
   } catch (error) {
-    console.error('Vertex API Error:', error);
+    console.error('Tarot Reading API Error:', error);
     throw error;
   }
 }

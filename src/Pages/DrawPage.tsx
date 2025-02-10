@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { DrawnTarotCard } from '../Types/tarotCard';
 import { drawRandomCards } from '../utils/drawRandomCards';
-import { callVertexAPI } from '../api/callVertexApi';
+import { callTarotReadingAPI } from '../api/callTarotReadingApi';
 import SpreadDisplay from '../Components/SpreadDisplay';
 import DrawPhaseDisplay from '../Components/DrawPhaseDisplay';
 import { motion, AnimatePresence } from 'motion/react';
@@ -11,7 +11,7 @@ import ShuffleDisplay from '../Components/ShuffleDisplay';
 import CutDisplay from '../Components/CutDisplay';
 import { saveQuestionReading } from '../api/questionReadingApi';
 import type { SpreadType } from '../Types/spread';
-import { ApiError } from '../api/callVertexApi';
+import { ApiError } from '../api/callTarotReadingApi';
 
 // 스타일 컴포넌트
 const DrawPageContainer = styled.div`
@@ -73,7 +73,7 @@ export default function DrawPage() {
       (async () => {
         try {
           // 1. 타로 해석 받아오기
-          const fetchedApiResponse = await callVertexAPI({
+          const fetchedApiResponse = await callTarotReadingAPI({
             userInput,
             cards: drawnCardsResult,
             spreadType

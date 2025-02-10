@@ -19,10 +19,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/user/, ''),
         },
-        '/vertex-claude': {
+        '/tarot-reading': {
           target: env.VITE_FIREBASE_FUNCTIONS_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/vertex-claude/, '/api/vertex-claude'),
+          rewrite: (path) => path.replace(/^\/tarot-reading/, '/api/tarot-reading'),
         },
         '/question-reading': {
           target: env.VITE_FIREBASE_FUNCTIONS_API_URL,
