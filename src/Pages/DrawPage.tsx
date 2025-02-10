@@ -128,7 +128,8 @@ export default function DrawPage() {
           state: {
             error,
             cards: drawnCards,
-            spreadType
+            spreadType,
+            userInput
           }
         });
       } else if (apiResponse && readingId) {
