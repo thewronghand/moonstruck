@@ -74,6 +74,27 @@ const SpreadInfo = styled.div`
   }
 `;
 
+const UserQuestion = styled.div`
+  text-align: center;
+  padding: 24px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  width: 100%;
+
+  h3 {
+    color: #495057;
+    margin-bottom: 12px;
+    font-size: 1.1em;
+  }
+
+  p {
+    color: #495057;
+    font-size: 1.2em;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+`;
+
 interface ErrorPageState {
   error: {
     code: string;
@@ -82,12 +103,13 @@ interface ErrorPageState {
   };
   cards: DrawnTarotCard[];
   spreadType: SpreadType;
+  userInput: string;
 }
 
 export default function ErrorPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { error, cards, spreadType } = (location.state || {}) as ErrorPageState;
+  const { error, cards, spreadType, userInput } = (location.state || {}) as ErrorPageState;
   const { cardImages, isLoading } = useCardImages(cards, true);
   const spreadInfo = SPREAD_INFO[spreadType];
 
@@ -123,6 +145,11 @@ export default function ErrorPage() {
         <h2>{spreadInfo.name}</h2>
         <p>{spreadInfo.description}</p>
       </SpreadInfo>
+
+      <UserQuestion>
+        <h3>입력한 질문</h3>
+        <p>"{userInput}"</p>
+      </UserQuestion>
 
       <CardList>
         {isLoading ? (
