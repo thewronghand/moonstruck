@@ -79,6 +79,7 @@ export default function DrawPage() {
             spreadType
           });
           const interpretation = fetchedApiResponse.content?.[0]?.text || '';
+          console.log(`사용된 모델: ${fetchedApiResponse.model}`);
           // 2. DB에 저장
           const response = await saveQuestionReading({
             question: userInput,

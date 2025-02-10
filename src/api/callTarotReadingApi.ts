@@ -1,6 +1,7 @@
 import type { DrawnTarotCard } from '../Types/tarotCard';
 import type { SpreadType } from '../Types/spread';
 import { SPREAD_INFO } from '../Types/spread';
+import type { AIResponse } from '../Types/apiResponse';
 
 interface TarotReadingRequest {
   userInput: string;
@@ -22,7 +23,7 @@ export async function callTarotReadingAPI({
   userInput, 
   cards, 
   spreadType 
-}: TarotReadingRequest) {
+}: TarotReadingRequest): Promise<AIResponse> {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/tarot-reading`,
@@ -40,7 +41,7 @@ export async function callTarotReadingAPI({
     );
 
     if (!response.ok) {
-      throw new ApiError('API request failed', response.status);
+      throw new ApiError('타로 리딩 요청에 실패했습니다.', response.status);
     }
 
     return response.json();
