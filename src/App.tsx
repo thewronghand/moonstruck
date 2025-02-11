@@ -7,12 +7,15 @@ import ResultPage from './Pages/ResultPage';
 import DrawPage from './Pages/DrawPage';
 import LoginPage from './Pages/LoginPage';
 import { RecoilRoot } from 'recoil';
-import AuthProvider from './utils/AuthProvider';
+// import AuthProvider from './utils/AuthProvider';
 import { createGlobalStyle } from 'styled-components';
 import React, { useRef, useEffect, useState } from 'react';
 import SpreadTestPage from './Pages/SpreadTestPage';
 import DrawTestPage from './Pages/DrawTestPage';
 import DeckTestPage from './Pages/DeckTestPage';
+import SharePage from './Pages/SharePage';
+import StaticSpreadTestPage from './Pages/StaticSpreadTestPage';
+import ErrorPage from './Pages/ErrorPage';
 
 const AppContainer = styled.div`
   max-width: 480px;
@@ -68,7 +71,7 @@ function App() {
   return (
     <RecoilRoot>
       <GlobalStyle />
-      <AuthProvider>
+      {/* <AuthProvider> */}
         <AppContainerContext.Provider value={appContainer}>
           <AppContainer ref={containerRef}>
             <Router>
@@ -76,23 +79,30 @@ function App() {
                 <Route 
                   path="/" 
                   element={
-                    hasVisited ? <Navigate to="/home" /> : <Navigate to="/landing" />
+                    hasVisited ? (
+                      <Navigate to="/home" replace={true} />
+                    ) : (
+                      <Navigate to="/landing" replace={true} />
+                    )
                   } 
                 />
                 <Route path="/landing" element={<LandingPage />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/query" element={<QueryPage />} />
                 <Route path="/draw" element={<DrawPage />} />
-                <Route path="/result" element={<ResultPage />} />
+                <Route path="/result/:readingId" element={<ResultPage />} />
                 <Route path="/login/:platform" element={<LoginPage />} />
                 <Route path="/spread-test" element={<SpreadTestPage />} />
+                <Route path="/static-spread-test" element={<StaticSpreadTestPage />} />
                 <Route path="/draw-test" element={<DrawTestPage />} />
                 <Route path="/deck-test" element={<DeckTestPage />} />
+                <Route path="/share/:readingId" element={<SharePage />} />
+                <Route path="/error" element={<ErrorPage />} />
               </Routes>
             </Router>
           </AppContainer>
         </AppContainerContext.Provider>
-      </AuthProvider>
+      {/* </AuthProvider> */}
     </RecoilRoot>
   );
 }

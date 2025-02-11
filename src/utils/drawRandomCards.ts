@@ -28,6 +28,7 @@ function processCardDirection(card: TarotCard): DrawnTarotCard {
       direction === '정방향'
         ? card.upright.description
         : card.reversed.description,
+    imageDescription: card.imageDescription,
   };
   return result;
 }

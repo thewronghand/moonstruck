@@ -1,18 +1,11 @@
 import styled from 'styled-components';
-import { DrawnTarotCard } from '../../Types/tarotCard';
 import Card from '../Card';
 import { 
   CrossContainer,
   GridContainer 
 } from './styles/FiveCardCross.styles'
 import { motion } from 'motion/react';
-
-interface SpreadProps {
-  cards: DrawnTarotCard[];
-  revealed?: boolean;
-  onReveal?: () => void;
-  visibleCardCount?: number;
-}
+import { SpreadProps } from '../../Types/spread';
 
 const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: number }>`
   pointer-events: ${props => props.$visibleCardCount > props.$index ? 'auto' : 'none'};
@@ -23,7 +16,8 @@ export default function FiveCardCross({
   cards, 
   revealed = false, 
   onReveal,
-  visibleCardCount = 0 
+  visibleCardCount = 0,
+  cardImages
 }: SpreadProps) {
   if (cards.length < 5) return null;
 
@@ -45,6 +39,7 @@ export default function FiveCardCross({
         card={cards[cardIndex]} 
         isRevealed={revealed} 
         onReveal={onReveal}
+        imageUrl={cardImages.get(cards[cardIndex].id) || ''}
       />
     </CardContainer>
   );

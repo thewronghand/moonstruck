@@ -1,15 +1,10 @@
 import styled from 'styled-components';
-import { DrawnTarotCard } from '../../Types/tarotCard';
 import Card from '../Card';
 import { TripleSpreadContainer } from './styles/TripleSpread.styles';
 import { motion } from 'motion/react';
+import { TripleSpreadProps } from '../../Types/spread';
 
-interface SpreadProps {
-  cards: DrawnTarotCard[];
-  revealed?: boolean;
-  onReveal?: () => void;
-  visibleCardCount?: number;
-}
+
 
 const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: number }>`
   pointer-events: ${props => props.$visibleCardCount > props.$index ? 'auto' : 'none'};
@@ -18,15 +13,21 @@ const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: nu
 
 export default function TripleSpread({ 
   cards, 
+  spreadType,
   revealed = false, 
   onReveal,
-  visibleCardCount = 0
-}: SpreadProps) {
+  visibleCardCount = 0,
+  cardImages
+}: TripleSpreadProps) {
   if (!cards.length) return null;
+
+  const orderedCards = spreadType === 'TRIPLE_CHOICE' 
+    ? [cards[1], cards[0], cards[2]]
+    : cards.slice(0, 3);
 
   return (
     <TripleSpreadContainer>
-      {cards.slice(0, 3).map((card, index) => (
+      {orderedCards.map((card, index) => (
         <CardContainer 
           key={index}
           $visibleCardCount={visibleCardCount}
@@ -45,6 +46,7 @@ export default function TripleSpread({
             card={card} 
             isRevealed={revealed} 
             onReveal={onReveal}
+            imageUrl={cardImages.get(card.id) || ''}
           />
         </CardContainer>
       ))}

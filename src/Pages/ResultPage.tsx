@@ -1,43 +1,78 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { getQuestionReading } from '../api/questionReadingApi';
+import { QuestionReading } from '../Types/tarotReading';
+import QuestionReadingDisplay from '../Components/QuestionReadingDisplay';
 import {
   Container,
-  Section,
-  Title,
-  Text,
-  HomeButton
+  HomeButton,
+  ShareSection,
+  ShareTitle,
+  ShareButton,
 } from './styles/ResultPage.styles';
-import SpreadDisplay from '../Components/SpreadDisplay';
+import LoadingSpinner from '../Components/LoadingSpinner';
 
 export default function ResultPage() {
+  const { readingId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { userInput, apiResponse, drawnCards } = location.state || {};
+  
+  // location.state에서 reading 데이터를 받거나, 없으면 null로 초기화
+  const [reading, setReading] = useState<QuestionReading | null>(
+    location.state?.reading || null
+  );
+  const [isLoading, setIsLoading] = useState(!location.state?.reading);
+  const [copySuccess, setCopySuccess] = useState(false);
 
-  if (!apiResponse || !drawnCards) {
-    return <p>잘못된 접근입니다.</p>;
+  useEffect(() => {
+    // state로 받은 데이터가 없고 readingId가 있을 때만 DB 조회
+    if (!reading && readingId) {
+      const fetchReading = async () => {
+        try {
+          const data = await getQuestionReading(readingId);
+          setReading(data);
+        } catch (error) {
+          console.error('결과 조회 실패:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchReading();
+    }
+  }, [readingId, reading]);
+
+  const handleCopyLink = async () => {
+    try {
+      // share 페이지 URL 생성
+      const shareUrl = `${window.location.origin}/share/${readingId}`;
+      await navigator.clipboard.writeText(shareUrl);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('링크 복사 실패:', err);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <>
+        <LoadingSpinner />
+      </>
+    );
   }
+
+  if (!reading) return <p>결과를 찾을 수 없습니다.</p>;
 
   return (
     <Container>
-      <Section>
-        <Title>사용자 입력</Title>
-        <Text>{userInput}</Text>
-      </Section>
-
-      <Section>
-        <Title>뽑힌 카드</Title>
-        <SpreadDisplay 
-          cards={drawnCards} 
-          revealed={true}
-          visibleCardCount={drawnCards.length}
-        />
-      </Section>
-
-      <Section>
-        <Title>타로 해석</Title>
-        <Text>{apiResponse}</Text>
-      </Section>
+      <QuestionReadingDisplay reading={reading} />
+      
+      <ShareSection>
+        <ShareTitle>공유하기</ShareTitle>
+        <ShareButton onClick={handleCopyLink}>
+          {copySuccess ? '링크가 복사되었습니다!' : '링크 복사하기'}
+        </ShareButton>
+      </ShareSection>
 
       <HomeButton onClick={() => navigate('/')}>
         홈으로 돌아가기

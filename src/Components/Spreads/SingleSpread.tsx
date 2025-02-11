@@ -1,15 +1,8 @@
 import styled from 'styled-components';
-import { DrawnTarotCard } from '../../Types/tarotCard';
 import Card from '../Card';
 import { SingleSpreadContainer } from './styles/SingleSpread.styles';
 import { motion } from 'motion/react';
-
-interface SpreadProps {
-  cards: DrawnTarotCard[];
-  revealed?: boolean;
-  onReveal?: () => void;
-  visibleCardCount?: number;
-}
+import { SpreadProps } from '../../Types/spread';
 
 const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: number }>`
   pointer-events: ${props => props.$visibleCardCount > props.$index ? 'auto' : 'none'};
@@ -18,6 +11,7 @@ const CardContainer = styled(motion.div)<{ $visibleCardCount: number; $index: nu
 
 export default function SingleSpread({ 
   cards, 
+  cardImages,
   revealed = false, 
   onReveal,
   visibleCardCount = 0
@@ -43,6 +37,7 @@ export default function SingleSpread({
           card={cards[0]} 
           isRevealed={revealed} 
           onReveal={onReveal}
+          imageUrl={cardImages.get(cards[0].id) || ''}
         />
       </CardContainer>
     </SingleSpreadContainer>
