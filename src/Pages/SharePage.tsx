@@ -4,7 +4,7 @@ import { getQuestionReading } from '../api/questionReadingApi';
 import { QuestionReading } from '../Types/tarotReading';
 import QuestionReadingDisplay from '../Components/QuestionReadingDisplay';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWandSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import {
   Container,
   TryButton,
@@ -51,7 +51,7 @@ export default function SharePage() {
             ease: "easeInOut"
           }}
         >
-          <FontAwesomeIcon icon={faWandSparkles} />
+          <FontAwesomeIcon icon={faWandMagicSparkles} />
         </AnimatedIcon>
         나도 타로점 쳐보기
       </TryButton>
