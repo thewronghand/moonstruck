@@ -1,17 +1,19 @@
-import { DrawnTarotCard } from "../Types/tarotCard";
-import { SpreadType } from "../Types/spread";
+import { QuestionReading } from '../Types/tarotReading';
+import { SpreadType } from '../Types/spread';
+import { DrawnTarotCard } from '../Types/tarotCard';
 
-export const saveQuestionReading = async ({
-  question,
-  cards,
-  interpretation,
-  spreadType,
-}: {
+interface SaveQuestionReadingParams {
   question: string;
   cards: DrawnTarotCard[];
-  interpretation: string;
+  interpretation: {
+    content: string;
+    title: string;
+    model: string;
+  };
   spreadType: SpreadType;
-}) => {
+}
+
+export async function saveQuestionReading(params: SaveQuestionReadingParams): Promise<string> {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/question-reading/save`,
@@ -20,12 +22,13 @@ export const saveQuestionReading = async ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ question, cards, interpretation, spreadType })
+        body: JSON.stringify(params),
       }
     );
 
     if (!response.ok) {
-      throw new Error('Failed to save reading');
+      const errorData = await response.json();
+      throw new Error(errorData.error || '타로 리딩 저장에 실패했습니다.');
     }
 
     const { readingId } = await response.json();
@@ -36,17 +39,18 @@ export const saveQuestionReading = async ({
   }
 }
 
-export async function getQuestionReading(readingId: string) {
+export async function getQuestionReading(readingId: string): Promise<QuestionReading> {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_FIREBASE_FUNCTIONS_API_URL}/question-reading/get/${readingId}`
     );
 
     if (!response.ok) {
-      throw new Error('Reading not found');
+      const errorData = await response.json();
+      throw new Error(errorData.error || '타로 리딩을 불러오는데 실패했습니다.');
     }
 
-    return response.json();
+    return await response.json();
   } catch (error) {
     console.error('Get Reading Error:', error);
     throw error;

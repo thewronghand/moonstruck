@@ -50,7 +50,7 @@ export default function DrawPage() {
   const [currentPhase, setCurrentPhase] = useState<DrawPhase>('shuffle');
   const [drawnCards, setDrawnCards] = useState<DrawnTarotCard[]>([]);
   const [selectedCardIndices, setSelectedCardIndices] = useState<number[]>([]);
-  const [apiResponse, setApiResponse] = useState<string | null>(null);
+  const [apiResponse, setApiResponse] = useState<{content: string; title: string; model: string} | null>(null);
   const [showFlavorText, setShowFlavorText] = useState(false);
   const [readyToNavigate, setReadyToNavigate] = useState(false);
   const hasFetched = useRef(false);
@@ -78,16 +78,29 @@ export default function DrawPage() {
             cards: drawnCardsResult,
             spreadType
           });
-          const interpretation = fetchedApiResponse.content?.[0]?.text || '';
+          
+          // 새로운 응답 형식 처리
           console.log(`사용된 모델: ${fetchedApiResponse.model}`);
+          
           // 2. DB에 저장
           const response = await saveQuestionReading({
             question: userInput,
             cards: drawnCardsResult,
-            interpretation,
+            interpretation: {
+              content: fetchedApiResponse.content,
+              title: fetchedApiResponse.title,
+              model: fetchedApiResponse.model
+            },
             spreadType
           });
-          setApiResponse(interpretation);
+          
+          // 전체 응답 객체 저장
+          setApiResponse({
+            content: fetchedApiResponse.content,
+            title: fetchedApiResponse.title,
+            model: fetchedApiResponse.model
+          });
+          
           setReadingId(response);
         } catch (err) {
           setError({
