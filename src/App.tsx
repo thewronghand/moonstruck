@@ -68,6 +68,13 @@ function App() {
     localStorage.setItem('hasVisited', 'true');
   }
 
+  useEffect(() => {
+    // 카카오 SDK 초기화
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init('YOUR_JAVASCRIPT_KEY'); // 발급받은 JavaScript 키 입력
+    }
+  }, []);
+
   return (
     <RecoilRoot>
       <GlobalStyle />
