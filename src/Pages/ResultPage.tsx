@@ -9,8 +9,10 @@ import {
   ShareSection,
   ShareTitle,
   ShareButton,
+  ButtonSection,
 } from './styles/ResultPage.styles';
 import LoadingSpinner from '../Components/LoadingSpinner';
+import KakaoShareButton from '../Components/KakaoShareButton';
 
 export default function ResultPage() {
   const { readingId } = useParams();
@@ -68,10 +70,18 @@ export default function ResultPage() {
       <QuestionReadingDisplay reading={reading} />
       
       <ShareSection>
-        <ShareTitle>공유하기</ShareTitle>
-        <ShareButton onClick={handleCopyLink}>
-          {copySuccess ? '링크가 복사되었습니다!' : '링크 복사하기'}
-        </ShareButton>
+        <ShareTitle>내 결과 공유하기</ShareTitle>
+        
+        <ButtonSection>
+          <ShareButton onClick={handleCopyLink}>
+            {copySuccess ? '링크가 복사되었습니다!' : '공유 링크 복사하기'}
+          </ShareButton>
+          
+          <KakaoShareButton 
+            title={typeof reading.interpretation === 'object' ? reading.interpretation.title : '타로 해석 결과'} 
+            readingId={reading.id || readingId || ''}
+          />
+        </ButtonSection>
       </ShareSection>
 
       <HomeButton onClick={() => navigate('/')}>

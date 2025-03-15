@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Section, Title } from '../../Components/styles/ReadingDisplay.styles';
+import { CommonButton } from '../../Components/styles/common.styles';
 
 export const Container = styled.div`
   padding: 20px;
@@ -31,20 +32,24 @@ export const ShareSection = styled(Section)`
 export const ShareTitle = styled(Title)`
   font-size: 1.2rem;
   text-align: center;
+  margin-bottom: 16px;
 `;
 
-export const ShareButton = styled.button`
+export const ButtonSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+`;
+
+export const ShareButton = styled(CommonButton)`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 100%;
-  padding: 12px;
   background-color: #f5f5f5;
+  color: #333;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
 
   &:hover {
     background-color: #eee;
